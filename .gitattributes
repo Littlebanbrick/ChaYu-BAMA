@@ -1,0 +1,13 @@
+# Normalize line endings: Git stores LF, checks out native.
+* text=auto eol=lf
+
+# Python files always use LF.
+*.py text eol=lf
+*.txt text eol=lf
+*.yaml text eol=lf
+*.yml text eol=lf
+*.md text eol=lf
+
+# Binary.
+*.pdf binary
+*.db binary
