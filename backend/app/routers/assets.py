@@ -5,6 +5,7 @@ from fastapi import APIRouter
 from app import responses
 from app.schemas import MarketingAssetRequest
 from app.services import asset_service
+from app.routers.expressions import _llm_meta_kwargs
 
 router = APIRouter(prefix="/api", tags=["assets"])
 
@@ -15,8 +16,11 @@ def create_marketing_asset(tea_id: str, body: MarketingAssetRequest):
 
     language=zh → 国内物料（source_expression_id 指向国内表达）
     language=en → 跨文化物料（source_translation_id 指向跨文化表达）
+
+    阶段二：启用 LLM 时由规则约束生成 copy + image_prompt；雷达数值仍由 seed
+    事实提供，真图 / 真视频仍为 P2 fallback（image_generation_enabled=false）。
     """
-    asset, status = asset_service.get_marketing_asset(
+    asset, status, llm_meta = asset_service.get_marketing_asset(
         tea_id=tea_id,
         language=body.language,
         asset_type=body.asset_type,
@@ -36,8 +40,8 @@ def create_marketing_asset(tea_id: str, body: MarketingAssetRequest):
             message="该茶品对应语言物料 Demo 阶段尚未预置。",
         )
 
-    asset.pop("_selected_rules", None)
     return responses.success(
         asset,
         image_generation_enabled=False,  # 当前未真正调用生图服务
+        **_llm_meta_kwargs(llm_meta),
     )
