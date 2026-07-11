@@ -15,6 +15,9 @@ ENV/
 *.db
 *.db-journal
 
+# .env 含明文 LLM key，绝不进镜像；容器经 docker-compose env_file 注入
+.env
+
 .git/
 .gitignore
 Dockerfile

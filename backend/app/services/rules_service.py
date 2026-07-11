@@ -55,10 +55,19 @@ def select_rules(
 
 
 def render_rules_for_prompt(rules: list[dict]) -> str:
-    """把筛选后的规则渲染成可注入 prompt 的文本（接 LLM 时使用）。"""
+    """把筛选后的规则渲染成可注入 prompt 的文本。
+
+    输出规则 id / instruction，并在规则带 negative_example / positive_example
+    时一并附上——反面示例是 LLM 真正会尊重的约束（如 rule_marketing_factual_boundary
+    的"经八马实测…"正是"不得把代理数据写成八马单品实测值"的关键信号）。
+    """
     if not rules:
         return "（无匹配规则）"
-    lines = []
+    lines: list[str] = []
     for r in rules:
         lines.append(f"- [{r['id']}] {r['instruction']}")
+        if r.get("negative_example"):
+            lines.append(f"  反例（不得出现）：{r['negative_example']}")
+        if r.get("positive_example"):
+            lines.append(f"  正例：{r['positive_example']}")
     return "\n".join(lines)

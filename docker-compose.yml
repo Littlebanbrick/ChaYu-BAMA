@@ -6,6 +6,10 @@ services:
     container_name: eighthorse-tea-backend
     ports:
       - "8000:8000"
+    # LLM key 等经 ./backend/.env 注入（.env 不进 Git / 不进镜像）。
+    # 未提供时 llm_enabled=False，生成接口自动走 mock 兜底。
+    env_file:
+      - ./backend/.env
     environment:
       APP_ENV: local
     restart: unless-stopped
