@@ -133,12 +133,21 @@ def _compile_route(pattern: str) -> re.Pattern:
     return re.compile("^" + "".join(src) + "$")
 
 
-@router.api_route("/{path:path}", methods=["GET", "POST", "PUT", "DELETE", "PATCH"])
+@router.api_route(
+    "/{path:path}",
+    methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
+    include_in_schema=False,
+)
 def catch_all_api(path: str, request: Request):
     """捕获所有未匹配的 /api/* 请求。
 
     本路由挂在 prefix="/api" 下，path 是去掉 "/api/" 后的部分
     （如 "demo-routes/" 或 "teas/tieguanyin_001/knowledge/"）。
+
+    include_in_schema=False：catch-all 不进 OpenAPI 文档。否则 5 个方法共用
+    一个 path 会生成重复 operationId（catch_all_api_api__path__get），既违反
+    OpenAPI 唯一性约束、污染 /docs，也会让前端代码生成器报错。藏出文档
+    不影响运行时兜底（含尾斜杠重定向、method_not_allowed 提示）。
 
     重定向前同时校验 path 与 method：
     - 若带尾斜杠的请求其实命中某已注册路由、且该路由支持当前请求方法
