@@ -14,6 +14,7 @@ Swagger: http://localhost:8000/docs
 # 让 `python app/main.py` 也能找到 `app` 包（把 backend/ 加入搜索路径）。
 # 必须在 import app.* 之前执行。uvicorn 方式不受影响。
 import sys
+from contextlib import asynccontextmanager
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
@@ -25,7 +26,25 @@ from fastapi.responses import JSONResponse
 
 from app import data_loader  # noqa: F401  启动时加载 seed
 from app import responses
+from app.config import get_settings
 from app.routers import assets, debug, expressions, fallback, teas, trace
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    """启动时预热 seed registry + 打印一次 LLM 启用状态（不输出 key）。
+
+    data_loader 已 lru_cache，这里主动触发一次，便于在启动日志中确认 seed
+    加载正常，而非在首个请求时才暴露加载错误。
+    """
+    data_loader.all_seeds()
+    s = get_settings()
+    if s.llm_enabled:
+        print(f"[startup] LLM 已启用：model={s.llm_model} timeout={s.llm_timeout}")
+    else:
+        print("[startup] LLM 未启用（未配置 LLM_API_KEY / LLM_BASE_URL），生成接口走 mock 兜底")
+    yield
+
 
 app = FastAPI(
     title="中国茶 AI 表达 Demo",
@@ -34,6 +53,7 @@ app = FastAPI(
         "主路径：1 款茶（铁观音）× 图片物料 ×（国内链 + 跨文化链）两条同构链路。"
     ),
     version="0.3.0",
+    lifespan=lifespan,
 )
 
 # Demo 阶段放开 CORS，方便前端本地联调；上线前应收紧 origins。
@@ -69,21 +89,6 @@ def root():
 def health():
     """健康检查。"""
     return {"status": "ok"}
-
-
-@app.on_event("startup")
-def _load_seeds_on_startup() -> None:
-    """启动时预热 seed registry（data_loader 已 lru_cache，这里主动触发一次，
-    便于在启动日志中确认 seed 加载正常，而非在首个请求时才暴露加载错误）。
-    同时打印一次 LLM 启用状态，方便确认是否已接 LLM（不输出 key）。"""
-    data_loader.all_seeds()
-    from app.config import get_settings
-
-    s = get_settings()
-    if s.llm_enabled:
-        print(f"[startup] LLM 已启用：model={s.llm_model} timeout={s.llm_timeout}")
-    else:
-        print("[startup] LLM 未启用（未配置 LLM_API_KEY / LLM_BASE_URL），生成接口走 mock 兜底")
 
 
 @app.exception_handler(RequestValidationError)
