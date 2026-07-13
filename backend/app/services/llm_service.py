@@ -31,6 +31,7 @@ from app.llm_schemas import (
     AssetCopy,
     CrossCulturalExpressionOutputs,
     DomesticExpressionOutputs,
+    NaturalLanguageIntent,
 )
 
 logger = logging.getLogger("app.llm")
@@ -40,6 +41,7 @@ _VALIDATORS: dict[type, Any] = {
     DomesticExpressionOutputs: DomesticExpressionOutputs,
     CrossCulturalExpressionOutputs: CrossCulturalExpressionOutputs,
     AssetCopy: AssetCopy,
+    NaturalLanguageIntent: NaturalLanguageIntent,
 }
 
 # status → 归并到 meta.llm_fallback_reason 的取值

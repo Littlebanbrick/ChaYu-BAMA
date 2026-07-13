@@ -31,6 +31,7 @@ from scripts.seed import run_seed
 _SETTINGS_MODULES = (
     "app.services.expression_service",
     "app.services.asset_service",
+    "app.services.intent_service",
     "app.services.llm_service",
     "app.routers.debug",
     "app.main",

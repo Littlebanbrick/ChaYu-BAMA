@@ -53,3 +53,18 @@ class AssetCopy(BaseModel):
     subheadline: str
     body: str
     image_prompt: str
+
+
+class NaturalLanguageIntent(BaseModel):
+    """自然语言意图解析输出：识别茶品 tea_id + 判定链路 chain（默认 domestic）。
+
+    tea_id 允许 None：用户提及的茶不在 DB 枚举内、或无法识别时回 null，
+    由路由层走 fallback（不假装识别到某款茶）。chain 限枚举：
+    domestic（默认）/ cross_cultural（仅当用户明确要求英文 / 西方 / 海外受众）。
+    后端会再校验 tea_id ∈ list_teas()、chain ∈ 枚举，防 LLM 幻觉 / 误值。
+    """
+
+    model_config = ConfigDict(extra="forbid")
+
+    tea_id: str | None
+    chain: Literal["domestic", "cross_cultural"]

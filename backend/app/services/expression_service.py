@@ -31,9 +31,16 @@ def _resolve_llm(
 
 
 def get_domestic_expression(
-    tea_id: str, audience: dict, style: str | None = None
+    tea_id: str,
+    audience: dict,
+    style: str | None = None,
+    directive: str | None = None,
 ) -> tuple[dict | None, str, dict]:
     """生成国内中文表达。
+
+    Args:
+        directive: 自然语言入口（POST /api/natural-expression）传来的原始用户指令，
+            透传进 prompt 作生成要求；现有 domestic-expression 接口调用时传 None，行为不变。
 
     Returns:
         (expression_data, status, llm_meta)。
@@ -68,6 +75,7 @@ def get_domestic_expression(
         system_prompt, user_prompt, _ = prompts.build_domestic_prompt(
             tea_id=tea_id, tea=tea, flavor=flavor, knowledge=knowledge,
             audience=audience or record.get("audience", {}), style=style,
+            directive=directive,
         )
         # 写路径缓存：同输入命中即复用，跳过本次 LLM 调用。
         input_hash = output_store.compute_input_hash(
@@ -117,12 +125,17 @@ def get_cross_cultural_expression(
     target_language: str,
     market: str,
     audience_reference: str,
+    directive: str | None = None,
 ) -> tuple[dict | None, str, dict]:
     """生成跨文化表达。
 
     跨文化表达由国内表达横向翻译派生：取国内 seed outputs 作翻译源文，
     连同风味坐标 / 跨文化术语 / 规则注入 LLM 做信达雅转译。
     source_expression_id 仍指向国内 seed 记录（与实际翻译源文一致）。
+
+    Args:
+        directive: 自然语言入口（POST /api/natural-expression）传来的原始用户指令，
+            透传进 prompt 作生成要求；现有 cross-cultural-expression 接口调用时传 None，行为不变。
 
     Returns:
         (expression_data, status, llm_meta)。
@@ -172,6 +185,7 @@ def get_cross_cultural_expression(
                 cross_cultural_terms=terms,
                 target_language=target_language, market=market,
                 audience_reference=audience_reference,
+                directive=directive,
             )
             # 写路径缓存：同输入命中即复用，跳过本次 LLM 调用。
             input_hash = output_store.compute_input_hash(
