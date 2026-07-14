@@ -2,6 +2,6 @@
 
 运行时读路径查 SQLite（data_loader getter，seed.py --reset 灌表）；写路径经
 output_store 缓存 generated_outputs 表。LLM 已接入（可选，未配置 key / 失败时
-退回 seed 兜底）。真实生图已接入（image_service，CogView-4，未配置 / 失败走
-fallback，无 seed 兜底）；视频生成仍走 fallback。
+退回 seed 兜底）。真实生图已接入（image_service，豆包 Seedream，未配置 / 失败走
+fallback，无 seed 兜底，图内渲染中文知识文字）；视频生成仍走 fallback。
 """

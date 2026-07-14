@@ -19,7 +19,7 @@ def create_marketing_asset(tea_id: str, body: MarketingAssetRequest):
 
     启用 LLM 时由规则约束生成 copy + image_prompt；雷达数值仍由 seed
     事实提供。物料接口本身不调生图（image_generation_enabled=false），
-    真实出图走独立接口 POST /api/image/generate（CogView-4）。
+    真实出图走独立接口 POST /api/image/generate（豆包 Seedream，图内渲染中文知识文字）。
     """
     asset, status, llm_meta = asset_service.get_marketing_asset(
         tea_id=tea_id,

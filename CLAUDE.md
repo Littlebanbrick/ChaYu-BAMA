@@ -12,11 +12,9 @@
 
 两条链路均已在后端以 YAML seed 数据跑通：国内链面向国内消费者，跨文化链面向欧美精品咖啡爱好者。两条链共享同一款茶的知识与风味坐标，跨文化表达由国内表达按规则横向翻译派生而来。
 
-三个文本生成接口（国内表达 / 跨文化表达 / 营销物料）已接入 LLM（OpenAI 兼容 SDK，默认指向 GLM，经 `backend/.env` 配置）。LLM 负责文本字段生成，ID / trace / source / 雷达数值仍由 seed 提供；未配置 key 或调用失败时透明退回 seed 预置表达（mock 兜底），不白屏。真实生图不调 LLM，由 image_service 直接调 CogView-4（见下段）。
+三个文本生成接口（国内表达 / 跨文化表达 / 营销物料）已接入 LLM（OpenAI 兼容 SDK，默认指向 GLM，经 `backend/.env` 配置）。LLM 负责文本字段生成，ID / trace / source / 雷达数值仍由 seed 提供；未配置 key 或调用失败时透明退回 seed 预置表达（mock 兜底），不白屏。真实生图不调 LLM，由 image_service 直接调豆包 Seedream（见下段）。
 
-真实生图已接入：`POST /api/image/generate` 调智谱 CogView-4（`quality=hd` + 关闭水印），返回临时图片 URL（30 天有效，同 prompt+size+style+scene 按 input_hash 缓存 29 天）。与 `marketing-asset` 两步联调——物料层只产 `image_prompt`（纯画面物体 + 产地线索 + 负面词），生图拆为独立接口（解耦耗时）。生图时后端给 prompt 套**三层确定性片段**（不调 LLM、零幻觉、确定性）：① `scene` 片段（镜头/构图，`closeup` 特写 / `landscape` 产地广角 / `product` 商品罐图）；② `style` 片段（光照/色调/氛围，`fresh` 默认清新 / `business` 商务）；③ 技术后缀（画质 + 负面词）。刻意不含 `Professional commercial product photography / elegant composition` 这类企业画册美学词（实测会把 CogView 拽向商务老气风），要商务感由调用方显式传 `style=business`。`scene` × `style` 正交（6 种出图方向），缓存键含两者防投毒。生图凭证独立走 `IMAGE_*`（`backend/.env`），与 `LLM_*` 相互独立、不回退——当前 `LLM_*` 多半指向 DeepSeek，不覆盖智谱 `/images/generations`，故生图必须独立配 `IMAGE_*` 指向智谱。未配置 / 失败走 fallback（生图无 seed 兜底）。视频生成仍为 P2 占位。
-
-**⚠️ 生图效果待修（2026-07-14 更新）**：CogView-4 链路（service / 路由 / 缓存 / fallback）已正确，但实测出图"商务老气"且"要素同质化"（总是一杯茶+花+茶叶）。分三步修：P1 清除 prompt 残留的企业画册美学信号词；P2 加 `style` 风格维度（fresh/business），把光照/色调/氛围从 seed 收进风格片段；P3 加 `scene` 镜头维度（closeup/landscape/product），让海报可产地广角山林 / 商品罐图，不再只有特写。seed `image_prompt` 退化为纯画面物体 + 产地线索 + 负面词，镜头/构图/光照/氛围全部由 scene/style 片段在生图时注入。**生图逻辑链路不动，待实测复核 scene×style 组合的出图效果。**
+真实生图已接入：`POST /api/image/generate` 调豆包 Seedream（火山方舟 Ark，`doubao-seedream-5-0-pro-260628`），关闭水印（`extra_body.watermark=false`），返回临时图片 URL（30 天有效，同 prompt+size+style+scene+language 按 input_hash 缓存 29 天）。图源已从智谱 CogView-4 切换为 Seedream——CogView 中文文字渲染能力不稳，而海报初衷是把"知识点 + 产品文案"印在图上；Seedream 图内中文渲染准确，`response_format="url"` 直接返临时 URL（无需改 b64 落盘架构）。与 `marketing-asset` 两步联调——物料层只产 `image_prompt`（纯画面物体 + 产地线索），生图拆为独立接口（解耦耗时）。生图时后端给 prompt 套确定性片段 + 图内中文文字（不调 LLM、零幻觉、确定性）：① `prompt`（画面物体 + 产地）；② `scene` 片段（镜头/构图，`closeup` 特写 / `landscape` 产地广角 / `product` 商品罐图）；③ `style` 片段（光照/色调/氛围，`fresh` 默认清新 / `business` 商务）；④ 图内中文文字段（传 `tea_id + language` 时，后端从 seed asset 表取 copy：`headline/subheadline/body`，full-bleed 直接叠在照片上无白边、带暗色渐变）；⑤ 画质后缀。刻意不含 `Professional commercial product photography / elegant composition` 这类企业画册美学词，要商务感由调用方显式传 `style=business`。`scene` × `style` 正交（6 种出图方向），缓存键含 `(prompt, size, style, scene, language)` 防投毒——language 尤其关键，不进键会串成错语言文字的图。生图凭证独立走 `IMAGE_*`（`backend/.env`），与 `LLM_*` 相互独立、不回退——当前 `LLM_*` 多半指向 DeepSeek，不覆盖 Ark `/images/generations`，故生图必须独立配 `IMAGE_*` 指向火山方舟（需在控制台开通该模型并关闭"安全体验模式"推理限额，否则 429）。未配置 / 失败走 fallback（生图无 seed 兜底）。Seedream 无 `quality` 参数（CogView 的 `quality=hd` 已废弃，`IMAGE_QUALITY` 留空）。视频生成仍为 P2 占位。
 
 不要默认扩展到多茶品、其他市场、其他受众参照系或真实视频生成。未开放能力应返回 fallback。
 
@@ -174,7 +172,7 @@ POST /api/image/generate
 GET  /api/trace/{output_id}
 ```
 
-国内链与跨文化链均为主路径，`domestic-expression` 升级为 P0：它是跨文化表达横向翻译的源文，且国内物料同样走到物料层。`POST /api/image/generate` 升级为 P0：真实生图（CogView-4）已接入，与 `marketing-asset` 两步联调。
+国内链与跨文化链均为主路径，`domestic-expression` 升级为 P0：它是跨文化表达横向翻译的源文，且国内物料同样走到物料层。`POST /api/image/generate` 升级为 P0：真实生图（豆包 Seedream，图内渲染中文知识文字）已接入，与 `marketing-asset` 两步联调。
 
 P1 建议：
 
@@ -226,11 +224,11 @@ data_loader 读路径切库（getter 查 SQLite，best-effort 降级不白屏）
 SQLAlchemy models（13 表）
 seed.py --reset（从 YAML 灌表，行数校验）
 output_store（generated_outputs 表作 LLM 输出缓存，写路径接库）
-P0 API（含真实生图 POST /api/image/generate，CogView-4）
+P0 API（含真实生图 POST /api/image/generate，豆包 Seedream，图内渲染中文知识文字）
 P1 fallback
 P2 占位 fallback（markets / audience-references 已升级为真实列表；image/generate 已升级为真实生图）
 LLM service、Prompt 模板、输出 JSON 校验（LLM-primary + seed-fallback）
-image_service（CogView-4 生图 + output_store 缓存，未启用/失败走 fallback）
+image_service（豆包 Seedream 生图 + output_store 缓存 + 图内渲染中文知识文字，未启用/失败走 fallback）
 pytest 测试覆盖（P0 / 生成 / 追溯 / LLM 降级 / 生图 / fallback / 读路径 shape 对齐）
 Dockerfile / docker-compose 后端服务
 ```
@@ -243,10 +241,11 @@ Dockerfile / docker-compose 后端服务
 4. ~~接入 LLM service、Prompt 模板和输出 JSON 校验。~~ ✅
 5. ~~接入真实生图（CogView-4，POST /api/image/generate）。~~ ✅（链路就位；出图质量待修）
 6. ~~修生图出图质量——P1 清商务信号词 + P2 style 风格维度（fresh/business）+ P3 scene 镜头维度（closeup/landscape/product），seed 退化为纯画面物体。~~ ✅（代码已改、测试全绿；实测复核中）
-7. 增加测试覆盖与前端联调。（测试覆盖已完成，前端联调待办）
-8. 按部署环境收紧 CORS、文档入口和密钥配置。
+7. ~~图源切豆包 Seedream + 图内渲染中文知识文字（CogView 中文渲染不稳，改用 Seedream；后端按 tea_id+language 取 seed copy 印进图）。~~ ✅
+8. 增加测试覆盖与前端联调。（测试覆盖已完成，前端联调待办）
+9. 按部署环境收紧 CORS、文档入口和密钥配置。
 
-不要接真实视频 API；真实生图已接入 CogView-4（智谱，经 `IMAGE_*` 配置，与 `LLM_*` 相互独立），经 `POST /api/image/generate` 暴露，支持 `scene`（closeup/landscape/product）× `style`（fresh/business）双维度。`marketing-asset` 仍返 `image_prompt` 作为生图输入（两步联调）。生图出图质量修复进行中——已清商务信号词 + 加 scene/style 双维度 + seed 退化为纯画面物体，待实测复核（见上「⚠️ 生图效果待修」）。
+不要接真实视频 API；真实生图已接入豆包 Seedream（火山方舟 Ark，经 `IMAGE_*` 配置，与 `LLM_*` 相互独立），经 `POST /api/image/generate` 暴露，支持 `scene`（closeup/landscape/product）× `style`（fresh/business）双维度，传 `tea_id + language` 时图内渲染中文知识文字（后端取 seed copy 印进图）。`marketing-asset` 仍返 `image_prompt` + `copy` 作为生图输入（两步联调）。
 
 ## 协作注意
 

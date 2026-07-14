@@ -74,11 +74,12 @@ class MarketingAssetRequest(BaseModel):
 
 class ImageGenerateRequest(BaseModel):
     prompt: str = Field(..., description="图片生成 prompt（通常来自 marketing-asset.image_prompt）")
-    size: str | None = Field(default=None, description="如 1024x1024 / 1440x720；空用配置默认")
+    size: str | None = Field(default=None, description="如 2K / 1024x1024；空用配置默认")
     style: str | None = Field(default=None, description="风格：fresh / business；空用默认 fresh")
     scene: str | None = Field(default=None, description="镜头：closeup / landscape / product；空用默认 closeup")
-    tea_id: str | None = Field(default=None, description="溯源用，不参与生图")
+    tea_id: str | None = Field(default=None, description="溯源用，兼配合 language 取 seed copy 印进图")
     route_id: str | None = Field(default=None, description="溯源用，不参与生图")
+    language: str | None = Field(default=None, description="zh/en；配合 tea_id 后端取 seed copy 印进图；空则纯画面出图")
 
 
 # ---------------------------------------------------------------------------

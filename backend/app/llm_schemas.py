@@ -71,7 +71,7 @@ class NaturalLanguageIntent(BaseModel):
 
 
 class ImageResult(BaseModel):
-    """生图结果（CogView-4 输出）。
+    """生图结果（豆包 Seedream 输出）。
 
     作 output_store 缓存的命名空间隔离（与文本输出哈希空间不相交）+
     存储载体。非 LLM 文本输出，故不参与 llm_service 的校验流程。

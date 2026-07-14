@@ -23,9 +23,10 @@ from tests.conftest import _patch_get_settings
 
 ENABLED_SETTINGS = Settings(
     image_api_key="fake-image-key",
-    image_base_url="https://open.bigmodel.cn/api/paas/v4",
-    image_model="cogview-4",
-    image_size="1024x1024",
+    image_base_url="https://ark.cn-beijing.volces.com/api/v3",
+    image_model="doubao-seedream-5-0-pro-260628",
+    image_size="2K",
+    image_quality="",  # Seedream 无 quality 参数
 )
 DISABLED_SETTINGS = Settings(image_api_key="", image_base_url="")
 
@@ -35,7 +36,7 @@ def _fake_images_response(url: str = "https://example.com/img.png") -> ImagesRes
     return ImagesResponse(
         id="fake",
         created=1710000000,
-        model="cogview-4",
+        model="doubao-seedream-5-0-pro-260628",
         data=[{"url": url}],
     )
 
@@ -77,26 +78,31 @@ def test_generate_image_success(monkeypatch):
     assert status == "ok"
     assert result is not None
     assert result["url"] == "https://example.com/ok.png"
-    assert result["model"] == "cogview-4"
-    assert result["size"] == "1024x1024"
+    assert result["model"] == "doubao-seedream-5-0-pro-260628"
+    assert result["size"] == "2K"
     assert result["style"] == image_service.DEFAULT_STYLE, "不传 style 应回显默认 fresh"
     assert result["scene"] == image_service.DEFAULT_SCENE, "不传 scene 应回显默认 closeup"
-    # 调用参数含 model/prompt/n/size/quality + extra_body(watermark)
+    assert result["language"] is None, "不传 copy/language 应回显 None（纯画面）"
+    # 调用参数含 model/prompt/n/size + extra_body(watermark/stream)；Seedream 无 quality
     sent = calls[0]
-    assert sent["model"] == "cogview-4"
+    assert sent["model"] == "doubao-seedream-5-0-pro-260628"
     assert sent["n"] == 1
-    assert sent["quality"] == "hd"
-    assert sent["extra_body"] == {"watermark_enabled": False}
-    # prompt 被富化：原"赛珍珠铁观音海报"+ 默认 closeup 镜头片段 + fresh 风格片段 + 技术后缀
+    assert sent["size"] == "2K"
+    assert "quality" not in sent, "Seedream 不传 quality"
+    assert sent["response_format"] == "url"
+    assert sent["extra_body"] == {"watermark": False, "stream": False}
+    # prompt 被富化：原"赛珍珠铁观音海报"+ 默认 closeup 镜头片段 + fresh 风格片段 + 画质后缀
     assert "赛珍珠铁观音海报" in sent["prompt"]
     # 商务信号词已清除（实测会把出图拽向商务老气风）
     assert "Professional commercial product photography" not in sent["prompt"]
     assert "elegant composition" not in sent["prompt"]
-    # 默认 closeup 镜头片段 + fresh 风格片段 + 画质 + 负面词仍在
+    # 默认 closeup 镜头片段 + fresh 风格片段 + 画质仍在
     assert "close-up product shot" in sent["prompt"]
     assert "morning daylight" in sent["prompt"]
     assert "photorealistic" in sent["prompt"]
-    assert "No text, no watermark" in sent["prompt"]
+    # 不传 copy → 纯画面出图，prompt 不含图内文字骨架（Seedream 不再禁文字，但也无字可印）
+    assert "Chinese text is overlaid" not in sent["prompt"]
+    assert "No text, no watermark" not in sent["prompt"], "Seedream 不再含禁文字约束"
     # 写了一条缓存
     assert output_store.count_rows() == 1
 
@@ -230,29 +236,86 @@ def test_generate_image_scene_in_cache_key(monkeypatch):
 
 def test_enrich_prompt_deterministic():
     """富化是纯函数、确定性：同输入两次结果一致；空 prompt 原样返回。"""
-    a = image_service._enrich_prompt("茶海报", "fresh", "closeup")
-    b = image_service._enrich_prompt("茶海报", "fresh", "closeup")
+    a = image_service._enrich_prompt("茶海报", "fresh", "closeup", None)
+    b = image_service._enrich_prompt("茶海报", "fresh", "closeup", None)
     assert a == b, "同 prompt + style + scene 富化结果应一致"
-    # 含默认 closeup 镜头 + fresh 风格 + 中性画质 + 负面词，不含商务信号词
+    # 含默认 closeup 镜头 + fresh 风格 + 画质，不含商务信号词，不含禁文字约束
     assert "close-up product shot" in a
     assert "morning daylight" in a
     assert "photorealistic" in a
-    assert "No text, no watermark" in a
+    assert "No text, no watermark" not in a
     assert "Professional commercial product photography" not in a
     assert "elegant composition" not in a
     # business 风格片段含商务光照信号，但不含已禁的美学词
-    biz = image_service._enrich_prompt("茶海报", "business", "closeup")
+    biz = image_service._enrich_prompt("茶海报", "business", "closeup", None)
     assert "low-key studio lighting" in biz
     assert "elegant composition" not in biz
     # landscape / product 镜头片段关键词
-    assert "wide establishing shot" in image_service._enrich_prompt("茶海报", "fresh", "landscape")
-    assert "tea canister as the main subject" in image_service._enrich_prompt("茶海报", "fresh", "product")
+    assert "wide establishing shot" in image_service._enrich_prompt("茶海报", "fresh", "landscape", None)
+    assert "tea canister as the main subject" in image_service._enrich_prompt("茶海报", "fresh", "product", None)
     # 去末尾句号后补后缀，避免双句号
-    assert image_service._enrich_prompt("海报。", "fresh", "closeup") == image_service._enrich_prompt("海报", "fresh", "closeup")
-    assert image_service._enrich_prompt("Poster.", "fresh", "closeup") == image_service._enrich_prompt("Poster", "fresh", "closeup")
+    assert image_service._enrich_prompt("海报。", "fresh", "closeup", None) == image_service._enrich_prompt("海报", "fresh", "closeup", None)
+    assert image_service._enrich_prompt("Poster.", "fresh", "closeup", None) == image_service._enrich_prompt("Poster", "fresh", "closeup", None)
     # 空 prompt 原样返回（不拼后缀）
-    assert image_service._enrich_prompt("", "fresh", "closeup") == ""
-    assert image_service._enrich_prompt("   ", "fresh", "closeup") == ""
+    assert image_service._enrich_prompt("", "fresh", "closeup", None) == ""
+    assert image_service._enrich_prompt("   ", "fresh", "closeup", None) == ""
+
+
+def test_enrich_prompt_with_copy_renders_in_image_text():
+    """传 copy → 图内中文文字骨架注入 prompt；headline/subheadline/body 都进 prompt。"""
+    copy = {
+        "headline": "赛珍珠：先闻三香",
+        "subheadline": "炒米香 · 果甜香 · 兰花香",
+        "body": "浓香型安溪铁观音，三香层层递进。",
+    }
+    enriched = image_service._enrich_prompt("赛珍珠海报", "fresh", "closeup", copy)
+    # 画面描述仍在
+    assert "赛珍珠海报" in enriched
+    # 图内文字骨架 + 三个 copy 字段都进 prompt
+    assert "Chinese text is overlaid" in enriched
+    assert "赛珍珠：先闻三香" in enriched
+    assert "炒米香 · 果甜香 · 兰花香" in enriched
+    assert "浓香型安溪铁观音，三香层层递进。" in enriched
+    # 骨架要求 full-bleed、直接叠在照片上、无白边
+    assert "DIRECTLY on the photograph" in enriched
+
+
+def test_enrich_prompt_copy_all_empty_degrades_to_pure_image():
+    """copy 三个字段都空 → 不注入文字骨架（纯画面出图）。"""
+    for copy in (None, {}, {"headline": "", "subheadline": "", "body": ""}):
+        enriched = image_service._enrich_prompt("海报", "fresh", "closeup", copy)
+        assert "Chinese text is overlaid" not in enriched
+        assert "海报" in enriched  # 画面描述仍在
+
+
+def test_generate_image_language_in_cache_key(monkeypatch):
+    """同 prompt+size+style+scene、不同 language（带 copy）→ 不命中彼此缓存。
+
+    language 必须进缓存键：同 prompt 不同 language 印不同语言文字，
+    不进键会串成错语言图。copy 由 router 取、service 只看 language 入参。
+    """
+    _patch_get_settings(monkeypatch, ENABLED_SETTINGS)
+
+    calls = []
+
+    class _FakeImages:
+        def generate(self, **kw):
+            calls.append(kw)
+            return _fake_images_response(f"https://example.com/{kw['prompt'][:1]}.png")
+
+    monkeypatch.setattr(image_service, "_client", lambda: type("C", (), {"images": _FakeImages()})())
+
+    copy_zh = {"headline": "中文标题", "subheadline": "中文副标题", "body": "中文正文"}
+    copy_en = {"headline": "EN Title", "subheadline": "EN Sub", "body": "EN body"}
+    image_service.generate_image(prompt="同款茶", style="fresh", scene="closeup",
+                                 copy=copy_zh, language="zh")
+    # 第二次换 language=en，prompt/style/scene 相同也不应命中 zh 的缓存
+    r2, s2 = image_service.generate_image(prompt="同款茶", style="fresh", scene="closeup",
+                                          copy=copy_en, language="en")
+    assert s2 == "ok"
+    assert r2["language"] == "en", "换 language 必须重新生图（缓存键含 language）"
+    # 真触网两次（缓存不串）
+    assert len(calls) == 2
 
 
 # ---------------------------------------------------------------------------
@@ -263,10 +326,11 @@ def test_enrich_prompt_deterministic():
 def test_generate_image_cache_hit(monkeypatch):
     """已缓存且 ≤29 天 → 命中、不触网、不新增缓存。"""
     _patch_get_settings(monkeypatch, ENABLED_SETTINGS)
-    # 先预写一条新鲜的缓存（created_at = now，必在 29 天内）
+    # 先预写一条新鲜的缓存（created_at = now，必在 29 天内）。缓存键含 language 占位。
     now_iso = datetime.now(timezone.utc).isoformat()
     input_hash = output_store.compute_input_hash(
-        ImageResult, "海报prompt", "1024x1024", image_service.DEFAULT_STYLE, image_service.DEFAULT_SCENE
+        ImageResult, "海报prompt", "2K", image_service.DEFAULT_STYLE,
+        image_service.DEFAULT_SCENE, image_service._NO_COPY_TOKEN,
     )
     output_store.persist(
         output_type="image",
@@ -275,10 +339,11 @@ def test_generate_image_cache_hit(monkeypatch):
         input_hash=input_hash,
         content={
             "url": "https://example.com/cached.png",
-            "model": "cogview-4",
-            "size": "1024x1024",
+            "model": "doubao-seedream-5-0-pro-260628",
+            "size": "2K",
             "style": image_service.DEFAULT_STYLE,
             "scene": image_service.DEFAULT_SCENE,
+            "language": image_service._NO_COPY_TOKEN,
             "created_at": now_iso,  # 刚写，新鲜
         },
     )
@@ -301,7 +366,8 @@ def test_generate_image_cache_expired(monkeypatch):
     # 预写一条 40 天前的缓存（已过期）
     expired_iso = (datetime.now(timezone.utc) - timedelta(days=40)).isoformat()
     input_hash = output_store.compute_input_hash(
-        ImageResult, "旧海报", "1024x1024", image_service.DEFAULT_STYLE, image_service.DEFAULT_SCENE
+        ImageResult, "旧海报", "2K", image_service.DEFAULT_STYLE,
+        image_service.DEFAULT_SCENE, image_service._NO_COPY_TOKEN,
     )
     output_store.persist(
         output_type="image",
@@ -310,8 +376,9 @@ def test_generate_image_cache_expired(monkeypatch):
         input_hash=input_hash,
         content={
             "url": "https://example.com/stale.png",
-            "model": "cogview-4",
-            "size": "1024x1024",
+            "model": "doubao-seedream-5-0-pro-260628",
+            "size": "2K",
+            "language": image_service._NO_COPY_TOKEN,
             "created_at": expired_iso,  # 40 天前
         },
     )
@@ -350,7 +417,7 @@ def test_generate_image_failure(monkeypatch, reason):
                 )
                 raise APIStatusError(message="429", response=resp, body=None)
             # parse_error: data 为空
-            return ImagesResponse(id="x", created=1, model="cogview-4", data=[])
+            return ImagesResponse(id="x", created=1, model="doubao-seedream-5-0-pro-260628", data=[])
 
     monkeypatch.setattr(image_service, "_client", lambda: type("C", (), {"images": _FakeImages()})())
     result, status = image_service.generate_image(prompt="x")

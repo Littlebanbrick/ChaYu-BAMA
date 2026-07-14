@@ -13,14 +13,17 @@ LLM 默认 disabled（conftest autouse）；本文件用局部 fixture 覆盖启
 import pytest
 from fastapi.testclient import TestClient
 
+from app import data_loader
 from app.config import Settings
 from app.services import image_service
 from tests.conftest import _patch_get_settings, TEA_ID
 
 ENABLED_SETTINGS = Settings(
     image_api_key="fake-image-key",
-    image_base_url="https://open.bigmodel.cn/api/paas/v4",
-    image_model="cogview-4",
+    image_base_url="https://ark.cn-beijing.volces.com/api/v3",
+    image_model="doubao-seedream-5-0-pro-260628",
+    image_size="2K",
+    image_quality="",
 )
 DISABLED_SETTINGS = Settings(image_api_key="", image_base_url="")
 
@@ -66,9 +69,10 @@ def test_image_generate_success(client: TestClient, monkeypatch):
         image_service, "generate_image",
         lambda **kw: (
             {"url": "https://example.com/img.png",
-             "model": "cogview-4", "size": kw.get("size") or "1024x1024",
+             "model": "doubao-seedream-5-0-pro-260628", "size": kw.get("size") or "2K",
              "style": kw.get("style") or image_service.DEFAULT_STYLE,
-             "scene": kw.get("scene") or image_service.DEFAULT_SCENE},
+             "scene": kw.get("scene") or image_service.DEFAULT_SCENE,
+             "language": kw.get("language")},
             "ok",
         ),
     )
@@ -84,9 +88,10 @@ def test_image_generate_success(client: TestClient, monkeypatch):
     d = body["data"]
     assert d["image_url"] == "https://example.com/img.png"
     assert d["prompt"] == "赛珍珠铁观音海报"
-    assert d["model"] == "cogview-4"
+    assert d["model"] == "doubao-seedream-5-0-pro-260628"
     assert d["tea_id"] == TEA_ID
     assert d["route_id"] == "szz_domestic_poster"
+    assert d["language"] is None  # 未传 language → None（纯画面）
 
 
 def test_image_generate_failure_fallback(client: TestClient, monkeypatch):
@@ -124,9 +129,10 @@ def test_image_generate_minimal_prompt(client: TestClient, monkeypatch):
     monkeypatch.setattr(
         image_service, "generate_image",
         lambda **kw: (
-            {"url": "https://example.com/x.png", "model": "cogview-4", "size": "1024x1024",
+            {"url": "https://example.com/x.png", "model": "doubao-seedream-5-0-pro-260628", "size": "2K",
              "style": kw.get("style") or image_service.DEFAULT_STYLE,
-             "scene": kw.get("scene") or image_service.DEFAULT_SCENE},
+             "scene": kw.get("scene") or image_service.DEFAULT_SCENE,
+             "language": kw.get("language")},
             "ok",
         ),
     )
@@ -145,9 +151,10 @@ def test_image_generate_style_echo(client: TestClient, monkeypatch):
     monkeypatch.setattr(
         image_service, "generate_image",
         lambda **kw: (
-            {"url": "https://example.com/s.png", "model": "cogview-4", "size": "1024x1024",
+            {"url": "https://example.com/s.png", "model": "doubao-seedream-5-0-pro-260628", "size": "2K",
              "style": kw.get("style") or image_service.DEFAULT_STYLE,
-             "scene": kw.get("scene") or image_service.DEFAULT_SCENE},
+             "scene": kw.get("scene") or image_service.DEFAULT_SCENE,
+             "language": kw.get("language")},
             "ok",
         ),
     )
@@ -168,12 +175,89 @@ def test_image_generate_scene_echo(client: TestClient, monkeypatch):
     monkeypatch.setattr(
         image_service, "generate_image",
         lambda **kw: (
-            {"url": "https://example.com/sc.png", "model": "cogview-4", "size": "1024x1024",
+            {"url": "https://example.com/sc.png", "model": "doubao-seedream-5-0-pro-260628", "size": "2K",
              "style": kw.get("style") or image_service.DEFAULT_STYLE,
-             "scene": kw.get("scene") or image_service.DEFAULT_SCENE},
+             "scene": kw.get("scene") or image_service.DEFAULT_SCENE,
+             "language": kw.get("language")},
             "ok",
         ),
     )
     assert client.post("/api/image/generate", json={"prompt": "p", "scene": "landscape"}).json()["data"]["scene"] == "landscape"
     assert client.post("/api/image/generate", json={"prompt": "p", "scene": "product"}).json()["data"]["scene"] == "product"
     assert client.post("/api/image/generate", json={"prompt": "p"}).json()["data"]["scene"] == "closeup"
+
+
+def test_image_generate_with_copy(client: TestClient, monkeypatch):
+    """传 tea_id + language → 后端取 seed copy 印进图，回显 language。
+
+    覆盖：router 调 data_loader.get_asset_by_language 取 copy、传给 service、
+    响应回显 language。monkeypatch data_loader getter 返固定 copy，monkeypatch
+    service 返成功，断言 copy 进了 service 入参、language 回显。
+    """
+    _patch_get_settings(monkeypatch, ENABLED_SETTINGS)
+
+    sent = {}
+
+    def _fake_generate(**kw):
+        sent.update(kw)
+        return (
+            {"url": "https://example.com/copy.png",
+             "model": "doubao-seedream-5-0-pro-260628", "size": "2K",
+             "style": kw.get("style") or image_service.DEFAULT_STYLE,
+             "scene": kw.get("scene") or image_service.DEFAULT_SCENE,
+             "language": kw.get("language")},
+            "ok",
+        )
+
+    fake_copy = {
+        "headline": "赛珍珠：先闻三香",
+        "subheadline": "炒米香 · 果甜香 · 兰花香",
+        "body": "浓香型安溪铁观音，三香层层递进。",
+    }
+    monkeypatch.setattr(data_loader, "get_asset_by_language",
+                        lambda tea_id, language: {"copy": fake_copy})
+    monkeypatch.setattr(image_service, "generate_image", _fake_generate)
+
+    resp = client.post(
+        "/api/image/generate",
+        json={"prompt": "赛珍珠海报", "tea_id": TEA_ID, "language": "zh",
+              "style": "fresh", "scene": "closeup"},
+    )
+    body = resp.json()
+    assert body["success"] is True
+    d = body["data"]
+    assert d["image_url"] == "https://example.com/copy.png"
+    assert d["language"] == "zh"
+    # copy 传给了 service 入参
+    assert sent.get("copy") == fake_copy
+    assert sent.get("language") == "zh"
+
+
+def test_image_generate_copy_missing_degrades_to_pure_image(client: TestClient, monkeypatch):
+    """传 tea_id + language 但 asset 不存在 → copy=None，纯画面出图、不 fallback。"""
+    _patch_get_settings(monkeypatch, ENABLED_SETTINGS)
+
+    sent = {}
+
+    def _fake_generate(**kw):
+        sent.update(kw)
+        return (
+            {"url": "https://example.com/plain.png",
+             "model": "doubao-seedream-5-0-pro-260628", "size": "2K",
+             "style": kw.get("style") or image_service.DEFAULT_STYLE,
+             "scene": kw.get("scene") or image_service.DEFAULT_SCENE,
+             "language": kw.get("language")},
+            "ok",
+        )
+
+    monkeypatch.setattr(data_loader, "get_asset_by_language", lambda tea_id, language: None)
+    monkeypatch.setattr(image_service, "generate_image", _fake_generate)
+
+    resp = client.post(
+        "/api/image/generate",
+        json={"prompt": "海报", "tea_id": TEA_ID, "language": "zh"},
+    )
+    body = resp.json()
+    assert body["success"] is True
+    assert body["meta"]["fallback"] is False
+    assert sent.get("copy") is None, "asset 不存在应传 copy=None，service 退化纯画面"

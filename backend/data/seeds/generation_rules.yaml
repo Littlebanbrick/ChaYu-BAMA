@@ -54,9 +54,9 @@ rules:
     audience_reference: any
     trigger_terms: []
     priority: high
-    instruction: "生成 image_prompt 时必须写成具体画面描述，而不是抽象海报排版要求。必须包含主体茶品、茶具、茶汤颜色、干茶形态、场景/道具、负面约束。可点出产地（如武夷岩茶、桐木关、安溪铁观音）以呼应知识层，但不要写具体镜头构图。镜头（特写 / 产地广角 / 商品图）由生图时按 scene 注入，光照/色调/氛围由 style 注入——image_prompt 不要写构图、光照、色调、氛围，否则切换失效。生图模型不要直接生成文字，避免乱码；文字由前端用 copy 字段渲染。禁止只写'高级海报/现代排版/editorial layout'，也禁止写 professional commercial product photography / elegant composition / premium realistic product photograph / refined atmosphere 等企业画册美学词（实测会把出图拽向商务老气风）；也禁止写光照/色调/氛围词（如 soft warm lighting / dark mood）。image_prompt 用英文，适合直接传给文生图模型。"
+    instruction: "生成 image_prompt 时必须写成具体画面描述，而不是抽象海报排版要求。必须包含主体茶品、茶具、茶汤颜色、干茶形态、场景/道具、负面约束。可点出产地（如武夷岩茶、桐木关、安溪铁观音）以呼应知识层，但不要写具体镜头构图。镜头（特写 / 产地广角 / 商品图）由生图时按 scene 注入，光照/色调/氛围由 style 注入——image_prompt 不要写构图、光照、色调、氛围，否则切换失效。不要在 image_prompt 里写 no generated text / no logo / no watermark——图内中文知识文字由生图后端按 copy 单独渲染（生图模型 = 豆包 Seedream，中文渲染稳定，不再需要禁文字约束）。禁止只写'高级海报/现代排版/editorial layout'，也禁止写 professional commercial product photography / elegant composition / premium realistic product photograph / refined atmosphere 等企业画册美学词（实测会把出图拽向商务老气风）；也禁止写光照/色调/氛围词（如 soft warm lighting / dark mood）。image_prompt 用英文，适合直接传给文生图模型。"
     negative_example: "Premium poster, modern editorial layout, elegant Chinese style, soft warm lighting, dark premium mood."
-    positive_example: "Saizhenzhu Tieguanyin oolong tea from Anxi, Fujian. A white porcelain gaiwan filled with clear golden tea liquor, with rolled Tieguanyin tea leaves and a few pale orchid flowers beside it. No generated text, no logo, no watermark."
+    positive_example: "Saizhenzhu Tieguanyin oolong tea from Anxi, Fujian. A white porcelain gaiwan filled with clear golden tea liquor, with rolled Tieguanyin tea leaves and a few pale orchid flowers beside it."
     enabled: true
 
   # ===== 跨文化翻译规则（报告第6章） =====

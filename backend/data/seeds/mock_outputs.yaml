@@ -159,7 +159,7 @@ assets:
         - { label: 焙火感, value: 5 }
         - { label: 回甘与尾韵, value: 8 }
     image_prompt: >-
-      Saizhenzhu Tieguanyin oolong tea. A white porcelain gaiwan filled with clear golden tea liquor, with rolled Tieguanyin tea leaves and a few pale orchid flowers arranged beside it. The tea originates from Anxi, Fujian. No generated text, no logo, no watermark.
+      Saizhenzhu Tieguanyin oolong tea. A white porcelain gaiwan filled with clear golden tea liquor, with rolled Tieguanyin tea leaves and a few pale orchid flowers arranged beside it. The tea originates from Anxi, Fujian.
     source_expression_id: expr_cn_szz_tgy_nx
     source_translation_id: null
     trace_id: asset_szz_poster_zh
@@ -181,7 +181,7 @@ assets:
         - { label: "Roasted Note", value: 5 }
         - { label: "Lingering Finish", value: 8 }
     image_prompt: >-
-      Saizhenzhu Tieguanyin roasted oolong tea. A white porcelain gaiwan and a small tasting cup filled with clear golden tea liquor, with rolled dark green Tieguanyin leaves and pale orchid flowers as props. The tea is from Anxi, Fujian. No generated text, no logo, no watermark.
+      Saizhenzhu Tieguanyin roasted oolong tea. A white porcelain gaiwan and a small tasting cup filled with clear golden tea liquor, with rolled dark green Tieguanyin leaves and pale orchid flowers as props. The tea is from Anxi, Fujian.
     source_expression_id: null
     source_translation_id: expr_en_szz_tgy_nx_coffee
     trace_id: asset_szz_poster_en
@@ -204,7 +204,7 @@ assets:
         - { label: 收敛感, value: 5 }
         - { label: 回甘与尾韵, value: 8 }
     image_prompt: >-
-      Niuyi Da Hong Pao Wuyi rock tea. A dark clay teapot and a small ceramic cup of amber tea liquor, with twisted dark oolong leaves placed beside the cup. The tea is a Wuyi rock tea from Fujian, known for its Yan Yun character. No generated text, no logo, no watermark.
+      Niuyi Da Hong Pao Wuyi rock tea. A dark clay teapot and a small ceramic cup of amber tea liquor, with twisted dark oolong leaves placed beside the cup. The tea is a Wuyi rock tea from Fujian, known for its Yan Yun character.
     source_expression_id: expr_cn_ny_wrt_dhp
     source_translation_id: null
     trace_id: asset_ny_poster_zh
@@ -226,7 +226,7 @@ assets:
         - { label: Astringency, value: 5 }
         - { label: "Lingering Finish", value: 8 }
     image_prompt: >-
-      Niuyi Da Hong Pao Wuyi rock tea. A dark purple clay teapot, a tasting cup with bright amber tea liquor, and twisted roasted oolong leaves arranged on a natural stone slab. The tea is a Wuyi rock tea from Fujian, defined by its Yan Yun structure and terroir. No generated text, no logo, no watermark.
+      Niuyi Da Hong Pao Wuyi rock tea. A dark purple clay teapot, a tasting cup with bright amber tea liquor, and twisted roasted oolong leaves arranged on a natural stone slab. The tea is a Wuyi rock tea from Fujian, defined by its Yan Yun structure and terroir.
     source_expression_id: null
     source_translation_id: expr_en_ny_wrt_dhp_coffee
     trace_id: asset_ny_poster_en
@@ -249,7 +249,7 @@ assets:
         - { label: 苦感, value: 2 }
         - { label: 回甘与尾韵, value: 7 }
     image_prompt: >-
-      Dinghong Jin Jun Mei black tea. A white porcelain cup filled with bright golden-red tea liquor, with fine golden tea buds and dry black tea leaves arranged beside it. The tea is a bud-type black tea from Tongmuguan, Wuyi mountains, Fujian. No generated text, no logo, no watermark.
+      Dinghong Jin Jun Mei black tea. A white porcelain cup filled with bright golden-red tea liquor, with fine golden tea buds and dry black tea leaves arranged beside it. The tea is a bud-type black tea from Tongmuguan, Wuyi mountains, Fujian.
     source_expression_id: expr_cn_dh_bt_jjm
     source_translation_id: null
     trace_id: asset_dh_poster_zh
@@ -271,7 +271,7 @@ assets:
         - { label: Bitterness, value: 2 }
         - { label: "Lingering Finish", value: 7 }
     image_prompt: >-
-      Dinghong Jin Jun Mei black tea. A sealed matte black tea canister with a minimalist gold-edged label, a small glass jar of fine golden tea buds and dry black tea leaves, and a single tasting cup of clear golden-red tea liquor. The tea is a bud-type black tea from Tongmuguan, Wuyi mountains, Fujian. No generated text, no logo, no watermark.
+      Dinghong Jin Jun Mei black tea. A sealed matte black tea canister with a minimalist gold-edged label, a small glass jar of fine golden tea buds and dry black tea leaves, and a single tasting cup of clear golden-red tea liquor. The tea is a bud-type black tea from Tongmuguan, Wuyi mountains, Fujian.
     source_expression_id: null
     source_translation_id: expr_en_dh_bt_jjm_wine
     trace_id: asset_dh_poster_en
