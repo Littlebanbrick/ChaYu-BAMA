@@ -84,3 +84,52 @@ def test_cross_cultural_unsupported_params_return_fallback(client):
                     json={"target_language": "en", "market": "western",
                           "audience_reference": "foobar"})
     assert r.json()["meta"]["fallback"] is True
+
+
+def test_domestic_expression_hint_fields_echo(client):
+    """tone/length 中文枚举翻成内部英文值回显；time_node 自由文本原样透传回显。
+
+    LLM disabled → outputs 走 seed，hint 不影响 seed 文案，但响应应回显
+    翻译后的 tone/length 与原样 time_node（不回显中文枚举）。
+    """
+    resp = client.post(
+        f"/api/teas/{TEA_ID}/domestic-expression",
+        json={
+            "tone": "温润亲切",
+            "length": "短（80字内）",
+            "time_node": "中秋",
+        },
+    )
+    assert resp.status_code == 200
+    d = resp.json()["data"]
+    assert d["tone"] == "warm"
+    assert d["length"] == "short"
+    assert d["time_node"] == "中秋"
+
+
+def test_domestic_expression_hint_optional_absent(client):
+    """不传 hint 时响应不含 tone/length/time_node 键（不增空字段）。"""
+    resp = client.post(f"/api/teas/{TEA_ID}/domestic-expression", json={})
+    d = resp.json()["data"]
+    assert "tone" not in d
+    assert "length" not in d
+    assert "time_node" not in d
+
+
+def test_cross_cultural_expression_hint_fields_echo(client):
+    resp = client.post(
+        f"/api/teas/{TEA_ID}/cross-cultural-expression",
+        json={
+            "target_language": "en",
+            "market": "western",
+            "audience_reference": "specialty_coffee_lovers",
+            "tone": "专业严谨",
+            "length": "中（80-200字）",
+            "time_node": "圣诞节",
+        },
+    )
+    assert resp.status_code == 200
+    d = resp.json()["data"]
+    assert d["tone"] == "professional"
+    assert d["length"] == "medium"
+    assert d["time_node"] == "圣诞节"

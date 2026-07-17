@@ -2,7 +2,7 @@
 
 from fastapi import APIRouter
 
-from app import responses
+from app import enum_map, responses
 from app.schemas import (
     CrossCulturalExpressionRequest,
     DomesticExpressionRequest,
@@ -19,11 +19,17 @@ def create_domestic_expression(tea_id: str, body: DomesticExpressionRequest):
 
     国内表达是跨文化表达横向翻译的源文，属 Demo 主路径，必须预置。
     启用 LLM 时由规则约束生成；未启用 / 失败时退回 seed 预置表达。
+
+    tone / length 经 enum_map 翻成内部英文值；time_node 自由文本原样透传。
+    三者都注入 prompt 影响话术调性 / 篇幅 / 场景化。
     """
     expr, status, llm_meta = expression_service.get_domestic_expression(
         tea_id=tea_id,
         audience=body.audience.model_dump(exclude_none=True),
         style=body.style,
+        tone=enum_map.resolve_expression_tone(body.tone),
+        length=enum_map.resolve_expression_length(body.length),
+        time_node=body.time_node,
     )
     if status == "tea_not_found":
         return responses.error("TEA_NOT_FOUND", "未找到对应茶品")
@@ -37,12 +43,18 @@ def create_domestic_expression(tea_id: str, body: DomesticExpressionRequest):
 
 @router.post("/teas/{tea_id}/cross-cultural-expression")
 def create_cross_cultural_expression(tea_id: str, body: CrossCulturalExpressionRequest):
-    """生成跨文化表达（由国内表达横向翻译派生，关系记于 source_expression_id）。"""
+    """生成跨文化表达（由国内表达横向翻译派生，关系记于 source_expression_id）。
+
+    tone / length 经 enum_map 翻成内部英文值；time_node 自由文本原样透传。
+    """
     expr, status, llm_meta = expression_service.get_cross_cultural_expression(
         tea_id=tea_id,
         target_language=body.target_language,
         market=body.market,
         audience_reference=body.audience_reference,
+        tone=enum_map.resolve_expression_tone(body.tone),
+        length=enum_map.resolve_expression_length(body.length),
+        time_node=body.time_node,
     )
 
     if status == "tea_not_found":

@@ -32,6 +32,7 @@ def create_marketing_asset(tea_id: str, body: MarketingAssetRequest):
         platform=enum_map.resolve_platform(body.platform),
         route_id=body.route_id,
         style=enum_map.resolve_marketing_style(body.style),
+        content_theme=enum_map.resolve_content_theme(body.content_theme),
     )
 
     if status == "tea_not_found":

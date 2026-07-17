@@ -85,3 +85,90 @@ def test_marketing_style_internal_value_self_mapped():
     """英文内部值自映射：前端传 youthful 原样通过。"""
     assert enum_map.resolve_marketing_style("youthful") == "youthful"
     assert enum_map.resolve_marketing_style("guofeng") == "guofeng"
+
+
+# ---------------------------------------------------------------------------
+# expression tone（国内链 + 跨文化链共用）
+# ---------------------------------------------------------------------------
+
+
+def test_expression_tone_aliases():
+    assert enum_map.resolve_expression_tone("温润亲切") == "warm"
+    assert enum_map.resolve_expression_tone("专业严谨") == "professional"
+    assert enum_map.resolve_expression_tone("诗意古风") == "poetic"
+    assert enum_map.resolve_expression_tone("活泼年轻") == "lively"
+    assert enum_map.resolve_expression_tone("商务克制") == "restrained_business"
+
+
+def test_expression_tone_none_and_empty():
+    assert enum_map.resolve_expression_tone(None) is None
+    assert enum_map.resolve_expression_tone("") is None
+
+
+def test_expression_tone_unknown_passthrough(caplog):
+    import logging
+
+    with caplog.at_level(logging.WARNING, logger="app.enum_map"):
+        result = enum_map.resolve_expression_tone("中二病")
+    assert result == "中二病"
+    assert any("expression tone" in r.message for r in caplog.records)
+
+
+def test_expression_tone_internal_value_self_mapped():
+    assert enum_map.resolve_expression_tone("warm") == "warm"
+    assert enum_map.resolve_expression_tone("poetic") == "poetic"
+
+
+# ---------------------------------------------------------------------------
+# expression length
+# ---------------------------------------------------------------------------
+
+
+def test_expression_length_aliases():
+    assert enum_map.resolve_expression_length("短（80字内）") == "short"
+    assert enum_map.resolve_expression_length("中（80-200字）") == "medium"
+    assert enum_map.resolve_expression_length("长（200字以上）") == "long"
+
+
+def test_expression_length_none_and_empty():
+    assert enum_map.resolve_expression_length(None) is None
+    assert enum_map.resolve_expression_length("") is None
+
+
+def test_expression_length_unknown_passthrough(caplog):
+    import logging
+
+    with caplog.at_level(logging.WARNING, logger="app.enum_map"):
+        result = enum_map.resolve_expression_length("大概三句话")
+    assert result == "大概三句话"
+    assert any("expression length" in r.message for r in caplog.records)
+
+
+# ---------------------------------------------------------------------------
+# content_theme（连字符 → 下划线）
+# ---------------------------------------------------------------------------
+
+
+def test_content_theme_hyphen_to_underscore():
+    assert enum_map.resolve_content_theme("tea-marketing") == "tea_marketing"
+    assert enum_map.resolve_content_theme("tea-culture") == "tea_culture"
+
+
+def test_content_theme_none_and_empty():
+    assert enum_map.resolve_content_theme(None) is None
+    assert enum_map.resolve_content_theme("") is None
+
+
+def test_content_theme_unknown_passthrough(caplog):
+    import logging
+
+    with caplog.at_level(logging.WARNING, logger="app.enum_map"):
+        result = enum_map.resolve_content_theme("tea-history")
+    assert result == "tea-history", "未知值原样透传，连字符也保留"
+    assert any("content_theme" in r.message for r in caplog.records)
+
+
+def test_content_theme_underscore_self_mapped():
+    """前端已传下划线内部值时原样通过。"""
+    assert enum_map.resolve_content_theme("tea_marketing") == "tea_marketing"
+    assert enum_map.resolve_content_theme("tea_culture") == "tea_culture"

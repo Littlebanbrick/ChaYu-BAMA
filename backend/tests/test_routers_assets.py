@@ -107,3 +107,22 @@ def test_asset_platform_unknown_value_passthrough(client):
     )
     assert resp.status_code == 200
     assert resp.json()["data"]["platform"] == "微博"
+
+
+def test_asset_content_theme_hyphen_to_underscore(client):
+    """content_theme 前端连字符值 → 后端下划线内部值回显。"""
+    resp = client.post(
+        f"/api/teas/{TEA_ID}/marketing-asset",
+        json={"language": "zh", "content_theme": "tea-culture"},
+    )
+    assert resp.status_code == 200
+    assert resp.json()["data"]["content_theme"] == "tea_culture"
+
+
+def test_asset_content_theme_optional_absent(client):
+    """不传 content_theme 时响应不含该键。"""
+    resp = client.post(
+        f"/api/teas/{TEA_ID}/marketing-asset",
+        json={"language": "zh"},
+    )
+    assert "content_theme" not in resp.json()["data"]

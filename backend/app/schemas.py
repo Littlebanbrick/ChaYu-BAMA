@@ -22,6 +22,28 @@ class DomesticAudience(BaseModel):
 class DomesticExpressionRequest(BaseModel):
     audience: DomesticAudience = Field(default_factory=DomesticAudience)
     style: str | None = Field(default="store_sales", description="表达风格，如 store_sales")
+    tone: str | None = Field(
+        default=None,
+        description=(
+            "语气 hint。前端可传中文枚举（温润亲切/专业严谨/诗意古风/活泼年轻/商务克制），"
+            "后端按 app.enum_map 翻成内部英文值（warm/professional/poetic/lively/"
+            "restrained_business）；未知值原样透传。注入 prompt 影响话术调性，不强制枚举。"
+        ),
+    )
+    length: str | None = Field(
+        default=None,
+        description=(
+            "篇幅 hint。前端可传中文枚举（短（80字内）/中（80-200字）/长（200字以上）），"
+            "后端按 app.enum_map 翻成内部英文值（short/medium/long）；未知值透传。注入 prompt。"
+        ),
+    )
+    time_node: str | None = Field(
+        default=None,
+        description=(
+            "时间节点 hint。自由文本（如'中秋''双11''圣诞节'），不经枚举映射、原样透传进 prompt，"
+            "让 LLM 结合节点生成场景化话术。国内 / 海外节点都走本字段，不区分。"
+        ),
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -37,6 +59,21 @@ class CrossCulturalExpressionRequest(BaseModel):
     )
     audience_level: str | None = Field(default="beginner")
     preserve_chinese_terms: bool | None = Field(default=True)
+    tone: str | None = Field(
+        default=None,
+        description=(
+            "语气 hint，与国内表达同一套枚举（温润亲切/专业严谨/... → warm/professional/...）。"
+            "未知值透传。注入 prompt。"
+        ),
+    )
+    length: str | None = Field(
+        default=None,
+        description="篇幅 hint（短（80字内）/中（80-200字）/长（200字以上）→ short/medium/long）。未知值透传。注入 prompt。",
+    )
+    time_node: str | None = Field(
+        default=None,
+        description="时间节点 hint，自由文本（如'圣诞节''Prime会员日'）原样透传进 prompt。国内 / 海外节点都走本字段。",
+    )
 
 
 # ---------------------------------------------------------------------------
@@ -78,6 +115,14 @@ class MarketingAssetRequest(BaseModel):
             "内部英文值（youthful/business/guofeng）；未知值原样透传。"
             "注意：与生图接口 §6.2 的 style（fresh/business）是两套维度——本字段管文案调性，"
             "生图 style 管画面光照色调。"
+        ),
+    )
+    content_theme: str | None = Field(
+        default=None,
+        description=(
+            "内容主题。前端 value 为 tea-marketing（茶叶营销，突出卖点/促销/礼盒）/"
+            "tea-culture（茶文化，传播茶道/产地/工艺）。后端按 app.enum_map 翻成内部下划线值"
+            "（tea_marketing / tea_culture）；未知值透传。注入 prompt 决定文案侧重营销还是文化叙事。"
         ),
     )
 

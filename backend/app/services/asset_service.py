@@ -29,8 +29,13 @@ def get_marketing_asset(
     platform: str | None = None,
     route_id: str | None = None,
     style: str | None = None,
+    content_theme: str | None = None,
 ) -> tuple[dict | None, str, dict]:
     """生成营销物料。
+
+    Args:
+        content_theme: 内容主题（tea_marketing / tea_culture），注入 prompt 决定
+            文案侧重营销还是文化叙事。None 时 LLM 默认偏营销。
 
     Returns:
         (asset_data, status, llm_meta)。
@@ -75,6 +80,7 @@ def get_marketing_asset(
                 expression_outputs=expr_record["outputs"],
                 language=language, market=market,
                 audience_reference=audience_reference, platform=platform, style=style,
+                content_theme=content_theme,
             )
             # 写路径缓存：同输入命中即复用，跳过本次 LLM 调用。
             input_hash = output_store.compute_input_hash(
@@ -128,6 +134,8 @@ def get_marketing_asset(
         data["route_id"] = route_id
     if style:
         data["style"] = style
+    if content_theme:
+        data["content_theme"] = content_theme
 
     llm_meta = {
         "llm_generated": llm_generated,

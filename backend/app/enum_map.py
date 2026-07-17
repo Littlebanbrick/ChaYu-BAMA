@@ -10,9 +10,9 @@
 - 未知值（不在表内）不 422、不静默丢弃——Demo 友好，记一条 warning
   后原样透传，由 LLM / 下游自行消化。这避免前端临时新增枚举时后端阻断。
 
-仅 marketing-asset 的 platform / style 用到，故函数名带 marketing_ 前缀。
-表达接口（domestic / cross-cultural）的 style 是后端自有枚举（store_sales 等），
-不走本表。tone / length / time_node 等若后续接入同样在本表扩展。
+仅 marketing-asset 的 platform / style / content_theme 用到，domestic-expression /
+cross-cultural-expression 的 tone / length 用到。表达接口的 style 是后端自有枚举
+（store_sales 等），不走本表。time_node 不映射（自由文本，原样透传进 prompt）。
 """
 
 import logging
@@ -46,6 +46,42 @@ MARKETING_STYLE_ALIASES: dict[str, str] = {
     "guofeng": "guofeng",
 }
 
+# 表达语气（tone）：前端中文枚举 → 内部英文值。
+# 国内链 + 跨文化链共用同一套语气维度。
+EXPRESSION_TONE_ALIASES: dict[str, str] = {
+    "温润亲切": "warm",
+    "专业严谨": "professional",
+    "诗意古风": "poetic",
+    "活泼年轻": "lively",
+    "商务克制": "restrained_business",
+    "warm": "warm",
+    "professional": "professional",
+    "poetic": "poetic",
+    "lively": "lively",
+    "restrained_business": "restrained_business",
+}
+
+# 表达篇幅（length）：前端"短（80字内）/中（80-200字）/长（200字以上）"
+# → 内部值 short / medium / long。
+EXPRESSION_LENGTH_ALIASES: dict[str, str] = {
+    "短（80字内）": "short",
+    "中（80-200字）": "medium",
+    "长（200字以上）": "long",
+    "short": "short",
+    "medium": "medium",
+    "long": "long",
+}
+
+# 物料内容主题：前端 value 已是英文短横线（tea-marketing / tea-culture），
+# 后端统一成下划线（tea_marketing / tea_culture）作内部值，避免连字符在
+# 标识符 / 缓存键里尴尬。映射收两套形式 + 下划线自映射。
+CONTENT_THEME_ALIASES: dict[str, str] = {
+    "tea-marketing": "tea_marketing",
+    "tea-culture": "tea_culture",
+    "tea_marketing": "tea_marketing",
+    "tea_culture": "tea_culture",
+}
+
 
 def _resolve(value: str | None, aliases: dict[str, str], field_name: str) -> str | None:
     """通用映射：查表命中返内部值，未命中 warn 后原样透传。
@@ -70,3 +106,18 @@ def resolve_platform(platform: str | None) -> str | None:
 def resolve_marketing_style(style: str | None) -> str | None:
     """前端物料风格枚举 → 内部英文值（国风 → guofeng 等）。未知值透传。"""
     return _resolve(style, MARKETING_STYLE_ALIASES, "marketing-asset style")
+
+
+def resolve_expression_tone(tone: str | None) -> str | None:
+    """前端语气枚举 → 内部英文值（温润亲切 → warm 等）。未知值透传。"""
+    return _resolve(tone, EXPRESSION_TONE_ALIASES, "expression tone")
+
+
+def resolve_expression_length(length: str | None) -> str | None:
+    """前端篇幅枚举 → 内部英文值（短（80字内）→ short 等）。未知值透传。"""
+    return _resolve(length, EXPRESSION_LENGTH_ALIASES, "expression length")
+
+
+def resolve_content_theme(content_theme: str | None) -> str | None:
+    """前端内容主题 → 内部值（tea-marketing → tea_marketing，连字符转下划线）。未知值透传。"""
+    return _resolve(content_theme, CONTENT_THEME_ALIASES, "content_theme")
