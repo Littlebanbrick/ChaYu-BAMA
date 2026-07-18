@@ -989,7 +989,7 @@ function renderChatArea(){
     const isUser=m.role==="user";
     const av=isUser?"你":"语";
     if(m.type==="image"){
-      html+=`<div class="msg image"><div class="msg-av">${av}</div><div class="msg-bubble"><img src="${m.imagePrompt}" alt="物料预览"/><div class="caption">${m.content}</div>${renderTraceChain(m.trace)}</div></div>`;
+      html+=`<div class="msg image"><div class="msg-av">${av}</div><div class="msg-bubble"><img src="${escapeAttr(m.imagePrompt)}" alt="物料预览" loading="lazy"/><div class="caption">${escapeHtml(m.content)}</div>${renderTraceChain(m.trace)}</div></div>`;
       return;
     }
     let body=m.content;
@@ -1157,6 +1157,11 @@ function handleOption(action,label){
   if(action==="overview-or-specific"){
     if(label==="整体总览"){action="overview";}
     else if(label==="特定成分"||label==="特定维度"){action="specific";}
+  }
+  // 确认/取消：inline onclick 传的是原始 optionAction「confirm-or-cancel」，
+  // 需按 label 翻成 confirm/cancel，否则下方 if/else if 一个都不命中 → 点确认静默无反应、不调后端。
+  if(action==="confirm-or-cancel"){
+    action=label==="确认"?"confirm":"cancel";
   }
   if(action==="overview"){
     S.typingText="正在生成茶语文案…";S.typing=true;updateChatArea();
