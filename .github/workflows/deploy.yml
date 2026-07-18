@@ -16,6 +16,9 @@ concurrency:
 
 jobs:
   deploy:
+    # 只在 origin（owner 自己的 fork）上跑部署；upstream（SunnyLiyuxin/ChaYu-BAMA）
+    # 无部署密钥、也非本仓库 owner，自动跳过，不制造失败记录、不需配任何 Secret。
+    if: github.repository == 'Littlebanbrick/ChaYu-BAMA'
     runs-on: ubuntu-latest
     timeout-minutes: 20
     steps:
