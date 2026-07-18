@@ -421,7 +421,7 @@ header.topbar{position:relative;z-index:20;display:flex;align-items:center;justi
 <script src="api.js"></script>
 <script>
 /* ============ DATA ============ */
-const TEA_CATEGORIES=["赛珍珠铁观音","牛一大红袍","鼎红金骏眉"];
+const TEA_CATEGORIES=["赛珍珠浓香型安溪铁观音","牛一武夷岩茶·大红袍","鼎红武夷红茶·金骏眉"];
 const GIFT_SCENES=[
   {value:"self",label:"自饮",desc:"日常品鉴，自得其乐"},
   {value:"elder",label:"送长辈",desc:"表达敬意与孝心"},
@@ -1099,7 +1099,7 @@ function handleOption(act,lbl){
     S.typing=true;paintMessages();
     const tea=S.mat.teaCategory||"茶叶";
     const routeId="demo_"+(S.mat.teaCategory||"tea");
-    BAMA_API.marketingAsset(S.mat.teaCategory||"赛珍珠铁观音", S.mat, routeId).then(assetRes=>{
+    BAMA_API.marketingAsset(S.mat.teaCategory||"赛珍珠浓香型安溪铁观音", S.mat, routeId).then(assetRes=>{
       const ad=(assetRes.data)||{};
       const copy=ad.copy||{};
       const imagePrompt=ad.image_prompt;
@@ -1107,7 +1107,7 @@ function handleOption(act,lbl){
       if(!imagePrompt){
         throw new Error("后端未返回 image_prompt");
       }
-      return BAMA_API.imageGenerate(imagePrompt, S.mat.teaCategory||"赛珍珠铁观音", S.mat, routeId).then(imgRes=>{
+      return BAMA_API.imageGenerate(imagePrompt, S.mat.teaCategory||"赛珍珠浓香型安溪铁观音", S.mat, routeId).then(imgRes=>{
         const imgData=imgRes.data||{};
         const imageUrl=imgData.image_url;
         const cl=MAT_CONTENT.find(c=>c.v===S.mat.content)?.l||"";

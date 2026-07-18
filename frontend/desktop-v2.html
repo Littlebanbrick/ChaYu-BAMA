@@ -492,7 +492,7 @@ function clearStoredState(edition){
   try{localStorage.removeItem(storageKey(edition||S.edition));}catch(e){}
 }
 
-const TEA_CATEGORIES=["赛珍珠铁观音","牛一大红袍","鼎红金骏眉"];
+const TEA_CATEGORIES=["赛珍珠浓香型安溪铁观音","牛一武夷岩茶·大红袍","鼎红武夷红茶·金骏眉"];
 const GIFT_SCENES=[
   {value:"self",label:"自饮",desc:"日常品鉴，自得其乐"},
   {value:"elder",label:"送长辈",desc:"表达敬意与孝心"},
@@ -1179,7 +1179,7 @@ function handleOption(action,label){
     S.typing=true;updateChatArea();
     const tea=S.matSel.teaCategory||"茶叶";
     const routeId="demo_"+(S.matSel.teaCategory||"tea");
-    BAMA_API.marketingAsset(S.matSel.teaCategory||"赛珍珠铁观音", S.matSel, routeId).then(assetRes=>{
+    BAMA_API.marketingAsset(S.matSel.teaCategory||"赛珍珠浓香型安溪铁观音", S.matSel, routeId).then(assetRes=>{
       const ad=(assetRes.data)||{};
       const copy=ad.copy||{};
       const imagePrompt=ad.image_prompt;
@@ -1187,7 +1187,7 @@ function handleOption(action,label){
       if(!imagePrompt){
         throw new Error("后端未返回 image_prompt");
       }
-      return BAMA_API.imageGenerate(imagePrompt, S.matSel.teaCategory||"赛珍珠铁观音", S.matSel, routeId).then(imgRes=>{
+      return BAMA_API.imageGenerate(imagePrompt, S.matSel.teaCategory||"赛珍珠浓香型安溪铁观音", S.matSel, routeId).then(imgRes=>{
         const imgData=imgRes.data||{};
         const imageUrl=imgData.image_url;
         const contentLabel=S.matSel.content==="tea-marketing"?"茶叶营销":"茶文化";

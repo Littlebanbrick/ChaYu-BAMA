@@ -51,7 +51,7 @@ docker compose down                 # 停止
 启动后访问：
 
 ```text
-http://localhost:8080          # 前端桌面原型（mobile.html 手机端）
+http://localhost:8080          # 前端桌面原型 desktop-v2（移动端 mobile-v2）
 http://localhost:8080/docs      # 后端 Swagger（经 nginx 反代）
 http://localhost:8000/docs      # 直连后端（也可，CORS 已放开）
 ```
