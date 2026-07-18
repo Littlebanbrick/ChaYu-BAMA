@@ -1,0 +1,1683 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>八马茶业「八马茶语」AI 营销助手 · 电脑端预览</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Serif+SC:wght@400;700;900&family=Noto+Sans+SC:wght@300;400;500;700&family=Cormorant+Garamond:ital,wght@0,400;0,700;1,400;1,700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --brothD:#C2613B; --broth:#D4734F; --brothL:#E08560;
+  --paper:#F7F5ED; --paperD:#EFECE1;
+  --moss:#2D4A3E; --mossL:#4A6B5C;
+  --gold:#B8935A; --goldD:#8B6B3D; --goldL:#D4B07A;
+  --cinnabar:#9B3A2F;
+  --ink:#8B3D22;
+  --bamaOrange:#FF6B1A;
+  --bamaBrown:#C2613B;
+  --shadow:0 12px 32px -8px rgba(194,97,59,.25);
+  --shadowL:0 24px 64px -16px rgba(194,97,59,.4);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{font-family:"Noto Sans SC",sans-serif;background:#F7F5ED;background-image:linear-gradient(135deg,#F7F5ED 0%,#EFECE1 50%,#E8E4D8 100%);background-attachment:fixed;color:var(--broth);min-height:100vh}
+body{display:flex;align-items:center;justify-content:center;padding:0}
+#app{width:100%;min-height:100vh;background:var(--paper);position:relative;overflow-x:hidden}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input,textarea{font-family:inherit}
+::selection{background:rgba(184,147,90,.3)}
+::-webkit-scrollbar{width:8px;height:8px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(184,147,90,.3);border-radius:4px}
+::-webkit-scrollbar-thumb:hover{background:rgba(184,147,90,.5)}
+
+.paper{background:var(--paper);background-image:
+  radial-gradient(circle at 20% 20%,rgba(184,147,90,.04) 0,transparent 50%),
+  radial-gradient(circle at 80% 60%,rgba(45,74,62,.03) 0,transparent 50%);
+  position:relative}
+.paper::before{content:"";position:absolute;inset:0;pointer-events:none;opacity:.5;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='n'%3E%3CfeTurbulence baseFrequency='.85' /%3E%3CfeColorMatrix values='0 0 0 0 0.36 0 0 0 0 0.10 0 0 0 0 0.10 0 0 0 .04 0' /%3E%3C/filter%3E%3Crect width='200' height='200' filter='url(%23n)' /%3E%3C/svg%3E")}
+
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes up{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+@keyframes pop{0%{opacity:0;transform:scale(.92) translateY(8px)}100%{opacity:1;transform:scale(1) translateY(0)}}
+@keyframes steam{0%,100%{transform:translateY(0) scale(1);opacity:.4}50%{transform:translateY(-12px) scale(1.05);opacity:.7}}
+@keyframes ripple{0%{transform:scale(.8);opacity:.8}100%{transform:scale(2.2);opacity:0}}
+@keyframes pulseGold{0%,100%{box-shadow:0 12px 32px -8px rgba(194,97,59,.5),0 0 0 0 rgba(184,147,90,.4)}50%{box-shadow:0 12px 32px -8px rgba(194,97,59,.5),0 0 0 12px rgba(184,147,90,0)}}
+@keyframes rippleSlow{0%,100%{transform:scale(.95);opacity:.5}50%{transform:scale(1.05);opacity:0}}
+@keyframes typing{0%,80%,100%{transform:scale(.6);opacity:.4}40%{transform:scale(1);opacity:1}}
+.anim-fade{animation:fade .6s ease-out both}
+.anim-up{animation:up .6s ease-out both}
+.anim-pop{animation:pop .3s cubic-bezier(.34,1.56,.64,1) both}
+
+.seal{display:inline-flex;align-items:center;background:var(--cinnabar);color:var(--paper);font-family:"Noto Serif SC",serif;font-weight:700;border-radius:4px;border:1px solid rgba(245,239,227,.3);box-shadow:0 1px 0 rgba(194,97,59,.2) inset}
+
+.deco-line{background:linear-gradient(90deg,transparent,rgba(184,147,90,.4) 20%,rgba(184,147,90,.8) 50%,rgba(184,147,90,.4) 80%,transparent);height:1px}
+
+.home-wrap{position:relative;min-height:100vh;width:100%}
+.bg-deco{position:absolute;inset:0;z-index:0;overflow:hidden;pointer-events:none}
+.tea-leaf{position:absolute;color:var(--goldL);filter:drop-shadow(0 2px 8px rgba(184,147,90,.25))}
+.topbar{position:relative;z-index:20;max-width:1280px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;padding:24px 32px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-mark{display:block}
+.logo-text{display:flex;flex-direction:column;gap:2px;line-height:1}
+.logo-text .t{font-family:"Noto Serif SC",serif;font-weight:900;font-size:18px;color:var(--bamaBrown);letter-spacing:.1em}
+.logo-text .s{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:11px;color:var(--bamaBrown);letter-spacing:.2em;opacity:.7}
+.topnav{display:flex;align-items:center;gap:12px}
+.topnav a{text-decoration:none;transition:all .2s}
+.topnav .nav-secondary{display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:999px;border:2px solid rgba(184,147,90,.6);background:rgba(245,239,227,.9);font-size:14px;font-weight:500;color:var(--brothD);backdrop-filter:blur(4px)}
+.topnav .nav-secondary:hover{border-color:var(--gold);background:var(--paper);box-shadow:0 0 0 1px rgba(184,147,90,.3),0 8px 24px -8px rgba(184,147,90,.4)}
+.topnav .nav-primary{display:inline-flex;align-items:center;gap:8px;padding:10px 22px;border-radius:999px;border:1px solid var(--gold);background:linear-gradient(135deg,var(--brothD),var(--ink));font-size:15px;font-weight:700;color:var(--goldL);box-shadow:0 0 20px rgba(184,147,90,.3),var(--shadow);animation:pulseGold 2.5s ease-in-out infinite}
+.topnav .nav-primary:hover{transform:scale(1.05);box-shadow:0 0 30px rgba(184,147,90,.5),var(--shadowL)}
+.topnav .nav-primary svg,.topnav .nav-secondary svg{width:16px;height:16px}
+.topnav .tag{padding:5px 12px;border-radius:999px;border:1px solid rgba(184,147,90,.3);font-size:11px;color:var(--goldD)}
+
+.hero{position:relative;z-index:10;max-width:1280px;margin:0 auto;display:flex;flex-direction:column;align-items:center;padding:32px 32px 48px;text-align:center}
+.hero-sub{display:flex;align-items:center;gap:12px;margin-bottom:24px}
+.hero-sub .line{width:48px;height:1px;background:linear-gradient(90deg,transparent,rgba(184,147,90,.6))}
+.hero-sub .line.r{background:linear-gradient(90deg,rgba(184,147,90,.6),transparent)}
+.hero h1{font-family:"Noto Serif SC",serif;font-weight:900;letter-spacing:.15em;font-size:72px;color:var(--brothD);text-shadow:0 4px 24px rgba(184,147,90,.15)}
+.hero h1 .gold{background:linear-gradient(135deg,#D4B07A,#B8935A,#8B6B3D);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;position:relative;display:inline-block}
+.hero-en{font-family:"Cormorant Garamond",serif;font-style:italic;letter-spacing:.2em;font-size:24px;color:var(--goldD);margin-top:16px}
+.hero-desc{margin-top:8px;max-width:640px;font-size:16px;color:rgba(212,115,79,.8)}
+.hero-bowl{position:relative;margin-top:32px;width:96px;height:96px;display:flex;align-items:center;justify-content:center;border-radius:50%;border:2px solid rgba(184,147,90,.3);background:rgba(245,239,227,.6);backdrop-filter:blur(4px)}
+.hero-bowl .inner{width:64px;height:64px;border-radius:50%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#C2613B,#8B3D22);box-shadow:0 8px 32px -8px rgba(194,97,59,.4)}
+.hero-bowl .inner span{font-family:"Noto Serif SC",serif;font-weight:700;font-size:28px;color:var(--goldL)}
+.ripple{position:absolute;inset:0;border-radius:50%;border:2px solid rgba(184,147,90,.4);animation:rippleSlow 2.4s ease-in-out infinite}
+.ripple.d{animation-delay:1.2s}
+.hero-cta-row{margin-top:40px;display:flex;flex-direction:column;align-items:center;gap:14px}
+.hero-cta{display:inline-flex;align-items:center;gap:8px;border:1px solid rgba(184,147,90,.4);background:rgba(245,239,227,.7);padding:10px 20px;border-radius:999px;font-size:14px;color:var(--brothD);transition:all .2s;backdrop-filter:blur(4px)}
+.hero-cta:hover{border-color:var(--gold);background:var(--paper);box-shadow:0 0 0 1px rgba(184,147,90,.3),0 8px 24px -8px rgba(184,147,90,.4)}
+.hero-cta svg{width:14px;height:14px}
+.hero-cta-primary{display:inline-flex;align-items:center;gap:8px;background:linear-gradient(135deg,var(--brothD),var(--ink));padding:12px 28px;border-radius:999px;font-size:15px;font-weight:600;color:var(--goldL);box-shadow:var(--shadow);transition:all .2s}
+.hero-cta-primary:hover{transform:scale(1.05);box-shadow:var(--shadowL)}
+.hero-cta-primary svg{width:16px;height:16px}
+.hero-kbd{margin-top:18px;display:flex;align-items:center;gap:6px;font-size:11px;color:rgba(212,115,79,.6)}
+.hero-kbd svg{width:12px;height:12px}
+.hero-kbd kbd{padding:2px 6px;border:1px solid rgba(184,147,90,.4);background:rgba(245,239,227,.8);border-radius:4px;font-family:monospace;font-size:10px;color:var(--brothD)}
+
+.block{position:relative;z-index:10;max-width:1280px;margin:0 auto;padding:48px 32px}
+.sec-head{display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center;margin-bottom:32px}
+.sec-kicker{display:flex;align-items:center;gap:8px;font-size:11px;letter-spacing:.3em;text-transform:uppercase;color:var(--gold)}
+.sec-kicker .l{width:32px;height:1px;background:rgba(184,147,90,.4)}
+.sec-kicker svg{width:12px;height:12px}
+.sec-head h2{font-family:"Noto Serif SC",serif;font-weight:700;font-size:32px;color:var(--brothD)}
+.sec-head p{max-width:560px;font-size:14px;color:rgba(212,115,79,.7)}
+
+.feat-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.feat-card{position:relative;overflow:hidden;border-radius:24px;border:1px solid rgba(184,147,90,.2);background:rgba(245,239,227,.7);padding:28px;box-shadow:var(--shadow);transition:all .4s}
+.feat-card:hover{transform:translateY(-4px);box-shadow:var(--shadowL)}
+.feat-card .glow{position:absolute;right:-48px;top:-48px;width:160px;height:160px;border-radius:50%;background:rgba(184,147,90,.1);filter:blur(40px);transition:.4s}
+.feat-card:hover .glow{background:rgba(184,147,90,.2)}
+.feat-card .num{position:absolute;right:24px;top:24px;font-family:"Cormorant Garamond",serif;font-style:italic;font-weight:700;font-size:60px;color:rgba(184,147,90,.1)}
+.feat-head{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.feat-icon{width:48px;height:48px;border-radius:16px;display:flex;align-items:center;justify-content:center;color:var(--paper);transition:transform .4s}
+.feat-icon svg{width:24px;height:24px}
+.feat-icon.gold{background:var(--gold)}
+.feat-icon.moss{background:var(--moss)}
+.feat-card:hover .feat-icon{transform:scale(1.1)}
+.feat-title{font-family:"Noto Serif SC",serif;font-weight:700;font-size:20px;color:var(--brothD)}
+.feat-sub{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:12px;letter-spacing:.2em;color:rgba(212,115,79,.6)}
+.feat-desc{margin-top:16px;font-size:14px;line-height:1.6;color:rgba(212,115,79,.8);position:relative;z-index:1}
+.feat-list{margin-top:16px;display:flex;flex-direction:column;gap:8px;position:relative;z-index:1}
+.feat-list li{display:flex;align-items:flex-start;gap:8px;list-style:none;font-size:13px;color:rgba(212,115,79,.8)}
+.feat-list li::before{content:"→";color:var(--gold);font-weight:700}
+
+.entry-grid{display:grid;grid-template-columns:1fr 1fr;gap:24px}
+.entry-card{position:relative;overflow:hidden;border-radius:24px;border:1px solid rgba(184,147,90,.3);background:rgba(245,239,227,.9);padding:32px;text-align:left;cursor:pointer;transition:all .4s;box-shadow:var(--shadow);display:flex;flex-direction:column;gap:16px}
+.entry-card:hover{transform:translateY(-4px);box-shadow:var(--shadowL);border-color:var(--gold)}
+.entry-card .glow{position:absolute;right:-64px;top:-64px;width:192px;height:192px;border-radius:50%;background:rgba(184,147,90,.2);filter:blur(48px);transition:.4s}
+.entry-card:hover .glow{background:rgba(184,147,90,.3)}
+.entry-card.ovs{background:linear-gradient(135deg,rgba(245,239,227,.9),rgba(237,227,208,.9))}
+.corner-seal{position:absolute;right:16px;top:16px}
+.entry-head{display:flex;align-items:center;gap:12px;position:relative;z-index:1}
+.entry-ic{width:48px;height:48px;border-radius:50%;background:linear-gradient(135deg,var(--brothD),var(--ink));display:flex;align-items:center;justify-content:center;color:var(--goldL)}
+.entry-ic svg{width:22px;height:22px}
+.entry-title{font-family:"Noto Serif SC",serif;font-weight:700;font-size:22px;color:var(--brothD)}
+.entry-sub{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:12px;letter-spacing:.2em;color:var(--goldD)}
+.entry-desc{font-size:14px;color:rgba(212,115,79,.75);position:relative;z-index:1}
+.entry-tags{display:flex;flex-wrap:wrap;gap:8px;position:relative;z-index:1}
+.entry-tag{display:inline-flex;align-items:center;gap:6px;padding:5px 10px;border-radius:999px;border:1px solid rgba(184,147,90,.3);background:rgba(245,239,227,.7);font-size:12px;color:var(--broth)}
+.entry-tag svg{width:12px;height:12px;color:var(--gold)}
+.entry-cta{margin-top:8px;display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-radius:12px;background:linear-gradient(135deg,var(--brothD),var(--ink));color:var(--paper);position:relative;z-index:1}
+.entry-cta .arr{display:flex;align-items:center;gap:4px;color:var(--goldL)}
+.entry-cta .arr svg{width:16px;height:16px;transition:transform .2s}
+.entry-card:hover .entry-cta .arr svg{transform:translateX(4px)}
+
+.foot{position:relative;z-index:10;border-top:1px solid rgba(184,147,90,.15);background:rgba(245,239,227,.4);backdrop-filter:blur(4px);padding:24px 32px;display:flex;flex-direction:column;align-items:center;gap:8px;text-align:center}
+.foot p{font-size:12px;color:rgba(212,115,79,.6)}
+.foot .en{font-family:"Cormorant Garamond",serif;font-style:italic;font-size:10px;color:rgba(184,147,90,.6)}
+.mini-logo{display:flex;align-items:center;gap:8px}
+.mini-logo .t{font-family:"Noto Serif SC",serif;font-weight:700;font-size:14px;color:var(--brothD)}
+
+.wb{position:relative;display:flex;height:100vh;overflow:hidden}
+.wb-bg{position:absolute;inset:0;z-index:0;pointer-events:none}
+.wb-bg .b1{position:absolute;left:-128px;top:25%;width:384px;height:384px;border-radius:50%;background:rgba(184,147,90,.05);filter:blur(80px)}
+.wb-bg .b2{position:absolute;right:-128px;bottom:25%;width:384px;height:384px;border-radius:50%;background:rgba(45,74,62,.05);filter:blur(80px)}
+
+.sidebar{position:relative;z-index:10;width:120px;background:linear-gradient(180deg,var(--brothD),var(--ink));box-shadow:var(--shadowL);display:flex;flex-direction:column;align-items:center;justify-content:space-between;padding:24px 0;flex-shrink:0}
+.sidebar .gold-line{position:absolute;left:0;top:0;height:100%;width:2px;background:linear-gradient(180deg,transparent,rgba(184,147,90,.6),transparent)}
+.sb-top{display:flex;flex-direction:column;align-items:center;gap:12px}
+.sb-btn{width:40px;height:40px;border-radius:999px;border:1px solid rgba(184,147,90,.3);background:rgba(194,97,59,.4);color:var(--goldL);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.sb-btn:hover{border-color:var(--gold);background:var(--ink)}
+.sb-btn svg{width:18px;height:18px}
+.sb-logo-wrap{display:flex;flex-direction:column;align-items:center;gap:8px}
+.sb-logo-circle{width:56px;height:56px;border-radius:50%;border:2px solid rgba(184,147,90,.4);background:rgba(194,97,59,.6);display:flex;align-items:center;justify-content:center}
+.sb-brand{display:flex;flex-direction:column;align-items:center;gap:2px;line-height:1}
+.sb-brand .t{font-family:"Noto Serif SC",serif;font-weight:700;font-size:12px;color:var(--goldL);letter-spacing:.15em}
+.sb-brand .s{font-size:10px;color:rgba(245,239,227,.5);letter-spacing:.1em}
+.sb-nav{display:flex;flex-direction:column;align-items:center;gap:10px}
+.sb-item{position:relative;width:88px;display:flex;flex-direction:column;align-items:center;gap:6px;padding:14px 8px;border-radius:16px;color:rgba(245,239,227,.6);transition:all .2s}
+.sb-item:hover{background:rgba(224,133,96,.25);color:var(--paper)}
+.sb-item.active{background:rgba(184,147,90,.15);color:var(--goldL);box-shadow:inset 0 0 0 1px rgba(184,147,90,.4)}
+.sb-item.active::before{content:"";position:absolute;left:-8px;top:50%;transform:translateY(-50%);width:4px;height:32px;border-radius:999px;background:var(--gold)}
+.sb-item svg{width:22px;height:22px}
+.sb-item .lb{font-family:"Noto Serif SC",serif;font-weight:600;font-size:13px;letter-spacing:.1em}
+.sb-item .dot{position:absolute;right:8px;top:8px;width:8px;height:8px;border-radius:50%;background:var(--gold);box-shadow:0 0 0 2px var(--brothD)}
+
+.edition-switch{position:relative;cursor:pointer}
+.edition-switch::before{content:"";position:absolute;left:50%;transform:translateX(-50%);bottom:100%;width:140px;height:10px}
+.edition-btn{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px;border-radius:12px;border:1px solid rgba(184,147,90,.3);background:rgba(194,97,59,.4);color:var(--goldL);transition:all .2s;line-height:1}
+.edition-btn:hover{border-color:var(--gold);background:var(--ink)}
+.edition-btn .lb{font-family:"Noto Serif SC",serif;font-weight:700;font-size:12px}
+.edition-btn .sb{font-size:10px;color:rgba(245,239,227,.5)}
+.edition-menu{position:absolute;bottom:100%;left:50%;transform:translateX(-50%);margin-bottom:8px;display:flex;flex-direction:column;gap:4px;padding:6px;border-radius:12px;background:var(--paper);border:1px solid rgba(184,147,90,.3);box-shadow:var(--shadowL);min-width:120px;opacity:0;visibility:hidden;pointer-events:none;transition:opacity .2s ease,visibility .2s ease}
+.edition-switch:hover .edition-menu,.edition-menu:hover{opacity:1;visibility:visible;pointer-events:auto}
+.edition-menu button{padding:8px 12px;border-radius:8px;font-size:12px;color:var(--broth);text-align:center;transition:background .15s}
+.edition-menu button:hover{background:rgba(184,147,90,.15)}
+.edition-menu button.cur{background:rgba(184,147,90,.2);color:var(--brothD);font-weight:700}
+
+.history-panel{position:relative;z-index:10;width:280px;background:rgba(245,239,227,.8);border-right:1px solid rgba(184,147,90,.15);display:flex;flex-direction:column;flex-shrink:0}
+.history-head{padding:16px 18px;border-bottom:1px solid rgba(184,147,90,.15);display:flex;align-items:center;justify-content:space-between}
+.history-head .htitle{font-family:"Noto Serif SC",serif;font-weight:700;font-size:15px;color:var(--brothD)}
+.history-head .new-btn{display:inline-flex;align-items:center;gap:4px;padding:5px 10px;border-radius:999px;background:linear-gradient(135deg,var(--brothD),var(--ink));color:var(--goldL);font-size:12px;font-weight:500;transition:all .2s}
+.history-head .new-btn:hover{transform:scale(1.05)}
+.history-head .new-btn svg{width:12px;height:12px}
+.history-list{flex:1;overflow-y:auto;padding:8px}
+.history-item{padding:12px 14px;border-radius:12px;cursor:pointer;transition:all .2s;margin-bottom:4px}
+.history-item:hover{background:rgba(184,147,90,.1)}
+.history-item.active{background:rgba(184,147,90,.15);box-shadow:inset 0 0 0 1px rgba(184,147,90,.3)}
+.history-item .ht{font-size:13px;font-weight:600;color:var(--brothD);line-height:1.4;margin-bottom:4px}
+.history-item .hs{font-size:11px;color:rgba(212,115,79,.6);line-height:1.4}
+.history-item .htime{font-size:10px;color:rgba(212,115,79,.4);margin-top:6px}
+.history-list::-webkit-scrollbar{width:6px}
+.history-list::-webkit-scrollbar-thumb{background:rgba(184,147,90,.2);border-radius:3px}
+
+.main{position:relative;z-index:10;flex:1;display:flex;flex-direction:column;overflow:hidden}
+.selbar{position:relative;z-index:10;display:flex;align-items:center;gap:12px;padding:12px 24px;border-bottom:1px solid rgba(184,147,90,.15);background:rgba(245,239,227,.4);backdrop-filter:blur(4px)}
+.selbar .title{display:flex;align-items:center;gap:8px;padding-right:8px}
+.selbar .title svg{width:16px;height:16px;color:var(--gold)}
+.selbar .title .lb{font-family:"Noto Serif SC",serif;font-weight:600;font-size:14px;color:var(--brothD)}
+.selbar .title .hint{font-size:12px;color:rgba(212,115,79,.5)}
+.selbar .sep{height:20px;width:1px;background:rgba(184,147,90,.2)}
+.selbar .pills{flex:1;display:flex;flex-wrap:wrap;gap:8px;overflow-x:auto}
+.pill{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:999px;border:1px solid rgba(184,147,90,.3);background:rgba(245,239,227,.8);font-size:12px;transition:all .2s}
+.pill:hover{border-color:var(--gold);background:var(--paper);box-shadow:0 1px 4px rgba(184,147,90,.2)}
+.pill.all-pill{background:linear-gradient(135deg,var(--brothD),var(--ink));color:var(--goldL);border-color:var(--gold);font-weight:600}
+.pill.all-pill:hover{box-shadow:0 0 12px rgba(184,147,90,.3)}
+.pill.all-pill .lb{color:var(--goldL)}
+.pill.all-pill .v{color:var(--paper)}
+.pill .lb{color:rgba(212,115,79,.6)}
+.pill .v{font-weight:500;color:var(--brothD)}
+.pill svg{width:12px;height:12px;color:var(--gold);opacity:0;transition:opacity .2s}
+.pill:hover svg{opacity:1}
+.pill.all-pill svg{opacity:1;color:var(--goldL)}
+
+.chat-area{position:relative;flex:1;overflow-y:auto;padding:24px 32px 96px}
+.chat-empty{height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;text-align:center}
+.chat-empty .deco{width:128px}
+.chat-empty h3{font-family:"Noto Serif SC",serif;font-weight:700;font-size:22px;color:var(--brothD)}
+.chat-empty p{max-width:480px;font-size:14px;color:rgba(212,115,79,.7);line-height:1.6}
+.msg{display:flex;gap:12px;margin-bottom:16px;animation:up .4s ease-out both}
+.msg.user{flex-direction:row-reverse}
+.msg-av{width:36px;height:36px;border-radius:50%;display:flex;align-items:center;justify-content:center;flex-shrink:0;font-family:"Noto Serif SC",serif;font-weight:700;font-size:14px}
+.msg.assistant .msg-av{background:linear-gradient(135deg,var(--brothD),var(--ink));color:var(--goldL)}
+.msg.user .msg-av{background:var(--gold);color:var(--paper)}
+.msg-bubble{max-width:70%;padding:12px 16px;border-radius:16px;font-size:14px;line-height:1.6}
+.msg.assistant .msg-bubble{background:var(--paper);border:1px solid rgba(184,147,90,.2);border-top-left-radius:4px;color:var(--broth)}
+.msg.user .msg-bubble{background:linear-gradient(135deg,var(--brothD),var(--ink));color:var(--paper);border-top-right-radius:4px}
+.msg.result .msg-bubble{background:rgba(45,74,62,.06);border:1px solid rgba(45,74,62,.2);border-top-left-radius:4px;color:var(--broth);font-size:13px;line-height:1.7}
+.msg.image .msg-bubble{padding:0;background:transparent;border:none;max-width:320px}
+.msg.image img{width:100%;border-radius:12px;border:1px solid rgba(184,147,90,.3);display:block}
+.msg.image .caption{margin-top:8px;font-size:12px;color:rgba(212,115,79,.6);text-align:center}
+.msg-opts{display:flex;flex-wrap:wrap;gap:8px;margin-top:8px}
+.msg-opt{padding:6px 12px;border-radius:999px;border:1px solid rgba(184,147,90,.3);background:var(--paper);font-size:12px;color:var(--brothD);transition:all .15s}
+.msg-opt:hover{border-color:var(--gold);background:rgba(184,147,90,.1)}
+.fb-link{margin-top:12px;display:flex;align-items:center;gap:6px;font-size:12px;color:rgba(212,115,79,.6);text-decoration:underline;text-underline-offset:2px}
+.fb-link svg{width:12px;height:12px}
+
+.trace-chain{margin-top:14px;padding:12px 14px;border-radius:14px;border:1.5px solid rgba(212,165,116,.55);background:rgba(251,245,240,.7);position:relative}
+.trace-chain::before{content:"";position:absolute;left:0;right:0;top:-8px;height:1px;background:linear-gradient(90deg,transparent,rgba(232,213,163,.7) 20%,rgba(232,213,163,.7) 80%,transparent)}
+.trace-head{display:flex;align-items:center;gap:6px;font-family:"Noto Serif SC",serif;font-weight:700;font-size:12px;color:var(--goldD);letter-spacing:.05em;margin-bottom:10px}
+.trace-head .ic{display:inline-flex;align-items:center;justify-content:center;width:18px;height:18px;border-radius:50%;background:rgba(212,165,116,.18);color:var(--goldD);font-size:11px}
+.pc-flow{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+.pc-node{display:flex;align-items:center;gap:6px;padding:6px 10px;border-radius:10px;border:1.5px solid transparent;background:rgba(255,255,255,.5);transition:all .2s}
+.pc-node .pc-ic{flex-shrink:0;width:20px;height:20px;border-radius:50%;display:inline-flex;align-items:center;justify-content:center;font-size:11px;font-weight:700}
+.pc-node .pc-info{display:flex;flex-direction:column;gap:1px;min-width:0}
+.pc-node .pc-lbl{font-family:"Noto Serif SC",serif;font-weight:600;font-size:12.5px;color:var(--brothD);white-space:nowrap}
+.pc-node .pc-dur{font-size:10px;color:rgba(74,107,92,.8);font-family:"Cormorant Garamond",serif}
+.pc-arr{flex-shrink:0;color:var(--gold);font-weight:700;font-size:14px;margin:0 2px}
+.pc-completed{border-color:rgba(74,107,92,.5);background:rgba(74,107,92,.08)}
+.pc-completed .pc-ic{background:var(--moss);color:#fff}
+.pc-completed .pc-lbl{color:var(--moss)}
+.pc-active{border-color:var(--gold);background:rgba(184,147,90,.1);animation:pulseGold 2s ease-in-out infinite}
+.pc-active .pc-ic{background:var(--gold);color:#fff}
+.pc-pending{border-color:rgba(184,147,90,.25);background:rgba(245,239,227,.4)}
+.pc-pending .pc-ic{background:rgba(184,147,90,.2);color:var(--goldD)}
+.pc-pending .pc-lbl{color:rgba(194,97,59,.45)}
+.pc-failed{border-color:var(--cinnabar);background:rgba(155,58,47,.08)}
+.pc-failed .pc-ic{background:var(--cinnabar);color:#fff}
+.pc-failed .pc-lbl{color:var(--cinnabar)}
+
+.typing{display:flex;gap:6px;padding:12px 16px;background:var(--paper);border:1px solid rgba(184,147,90,.2);border-radius:16px;border-top-left-radius:4px;width:fit-content;margin-bottom:16px}
+.typing .hint{font-size:12px;color:rgba(212,115,79,.7);margin-right:4px;font-style:italic}
+.typing .dot{width:8px;height:8px;border-radius:50%;background:var(--gold);animation:typing 1.4s ease-in-out infinite}
+.typing .dot:nth-child(2){animation-delay:.2s}
+.typing .dot:nth-child(3){animation-delay:.4s}
+
+.chat-input{position:absolute;bottom:0;left:0;right:0;padding:16px 32px;background:linear-gradient(180deg,transparent,var(--paper) 30%);display:flex;gap:12px;align-items:center}
+.chat-input form{flex:1;display:flex;gap:8px;align-items:center;padding:6px 6px 6px 16px;border-radius:999px;border:1px solid rgba(184,147,90,.3);background:var(--paper);box-shadow:var(--shadow)}
+.chat-input input{flex:1;border:none;background:transparent;font-size:14px;color:var(--broth);outline:none;padding:8px 0}
+.chat-input button{padding:8px 16px;border-radius:999px;background:linear-gradient(135deg,var(--brothD),var(--ink));color:var(--goldL);font-weight:600;font-size:13px;display:flex;align-items:center;gap:6px}
+.chat-input button:disabled{opacity:.4;cursor:not-allowed}
+.chat-input button svg{width:14px;height:14px}
+
+.modal{position:fixed;inset:0;z-index:50;display:flex;align-items:center;justify-content:center;padding:16px;animation:fade .3s ease-out}
+.modal .mask{position:absolute;inset:0;background:rgba(194,97,59,.7);backdrop-filter:blur(8px)}
+.modal .back-btn{position:fixed;left:50%;top:24px;transform:translateX(-50%);z-index:20;display:inline-flex;align-items:center;gap:8px;padding:8px 16px;border-radius:999px;border:1px solid rgba(184,147,90,.5);background:rgba(194,97,59,.8);color:var(--paper);box-shadow:var(--shadowL);backdrop-filter:blur(8px);transition:all .2s;animation:up .3s ease-out both}
+.modal .back-btn:hover{border-color:var(--gold);background:var(--brothD);transform:translateX(-50%) scale(1.05)}
+.modal .back-btn .ic{width:20px;height:20px;border-radius:50%;background:rgba(184,147,90,.2);display:flex;align-items:center;justify-content:center;transition:all .2s}
+.modal .back-btn:hover .ic{background:var(--gold);color:var(--brothD)}
+.modal .back-btn .ic svg{width:12px;height:12px}
+.modal .back-btn .lb{font-size:12px;font-weight:500;letter-spacing:.05em}
+.modal .back-btn .kbd{padding:2px 6px;border-radius:4px;background:rgba(194,97,59,.6);font-size:10px;color:rgba(212,176,122,.8)}
+.modal-card{position:relative;z-index:10;display:flex;flex-direction:column;max-height:85vh;width:100%;max-width:920px;border-radius:28px;border:1px solid rgba(184,147,90,.4);background:var(--paper);box-shadow:0 30px 80px -20px rgba(194,97,59,.55),0 0 0 1px rgba(184,147,90,.15);overflow:hidden;animation:pop .3s cubic-bezier(.34,1.56,.64,1) both}
+.modal-card::before{content:"";position:absolute;left:0;right:0;top:0;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);opacity:.8}
+.modal-head{display:flex;align-items:center;justify-content:space-between;padding:14px 24px;background:linear-gradient(135deg,var(--brothD),var(--ink));color:var(--paper);border-bottom:1px solid rgba(184,147,90,.2)}
+.modal-head .lt{display:flex;align-items:center;gap:12px}
+.modal-head .seal{padding:2px 8px;font-size:11px}
+.modal-head .ttl{font-family:"Noto Serif SC",serif;font-weight:700;font-size:16px;letter-spacing:.1em}
+.modal-head .sub{font-size:11px;color:rgba(245,239,227,.6);margin-top:2px}
+.modal-body{flex:1;overflow-y:auto;padding:14px 20px;position:relative}
+.modal-body .fields{display:flex;flex-direction:column;gap:10px;position:relative;z-index:1}
+.field{display:flex;flex-direction:column;gap:4px}
+.field-hd{display:flex;align-items:center;gap:8px}
+.field-hd .lb{font-family:"Noto Serif SC",serif;font-weight:600;font-size:13px;color:var(--brothD)}
+.field-hd .req{display:inline-flex;align-items:center;gap:4px;font-size:10px;color:var(--cinnabar)}
+.field-hd .req::before{content:"";width:4px;height:4px;border-radius:50%;background:var(--cinnabar)}
+.field-hd .hint{font-size:11px;color:rgba(212,115,79,.5)}
+.field-hd .hint::before{content:"· "}
+.field-opts{display:flex;flex-wrap:wrap;gap:6px}
+.opt{position:relative;display:flex;flex-direction:column;align-items:flex-start;gap:2px;border-radius:10px;border:1px solid rgba(224,133,96,.15);background:rgba(245,239,227,.6);padding:8px 10px;text-align:left;transition:all .15s;min-width:120px;cursor:pointer}
+.opt.compact{min-width:90px}
+.opt:hover{border-color:rgba(184,147,90,.6);background:var(--paper)}
+.opt.selected{border-color:var(--gold);background:rgba(184,147,90,.1);box-shadow:0 0 0 1px rgba(184,147,90,.3),0 2px 8px -2px rgba(184,147,90,.2)}
+.opt .row{display:flex;width:100%;align-items:center;justify-content:space-between;gap:8px}
+.opt .lb{font-size:12px;font-weight:500;color:var(--broth)}
+.opt.selected .lb{color:var(--brothD)}
+.opt .check{width:14px;height:14px;border-radius:50%;background:var(--gold);color:var(--paper);display:flex;align-items:center;justify-content:center}
+.opt .check svg{width:9px;height:9px}
+.opt .desc{font-size:10px;line-height:1.4;color:rgba(212,115,79,.6)}
+.field-2col{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.sub-panel{margin-top:4px;width:100%;display:flex;flex-wrap:wrap;gap:6px;padding:8px;border-radius:8px;border:1px solid rgba(184,147,90,.2);background:rgba(245,239,227,.4);animation:up .2s ease-out both}
+.input-row{margin-top:4px;width:100%;display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;border:1px solid rgba(184,147,90,.3);background:rgba(245,239,227,.6);animation:up .2s ease-out both}
+.input-row input{flex:1;border:1px solid rgba(224,133,96,.15);background:var(--paper);border-radius:6px;padding:5px 10px;font-size:12px;color:var(--brothD);outline:none}
+.input-row input:focus{border-color:var(--gold)}
+.input-row .tag{font-size:11px;color:rgba(212,115,79,.5)}
+.modal-foot{display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-top:1px solid rgba(184,147,90,.2);background:var(--paper)}
+.modal-foot .lt{display:flex;align-items:center;gap:8px;font-size:12px}
+.modal-foot .lt svg{width:14px;height:14px}
+.modal-foot .lt.ok{color:var(--moss)}
+.modal-foot .lt.warn{color:var(--cinnabar)}
+.modal-foot .lt.neutral{color:rgba(212,115,79,.6)}
+.btn-confirm{display:inline-flex;align-items:center;gap:6px;padding:8px 20px;border-radius:999px;font-size:13px;font-weight:600;color:var(--paper);background:linear-gradient(135deg,var(--brothD),var(--ink));box-shadow:var(--shadow);transition:all .2s}
+.btn-confirm:hover{transform:scale(1.05);box-shadow:var(--shadowL)}
+.btn-confirm:disabled{opacity:.4;cursor:not-allowed;background:rgba(224,133,96,.3);color:rgba(245,239,227,.5);box-shadow:none}
+.btn-confirm svg{width:14px;height:14px}
+
+.modal-card.single{max-width:640px}
+.modal-card.single .field-opts{gap:8px}
+
+.shortcut-hint{position:fixed;right:24px;bottom:24px;z-index:30;padding:8px 12px;border-radius:12px;background:rgba(194,97,59,.8);color:rgba(245,239,227,.7);font-size:11px;backdrop-filter:blur(8px);border:1px solid rgba(184,147,90,.3);display:flex;align-items:center;gap:8px}
+.shortcut-hint svg{width:14px;height:14px;color:var(--gold)}
+.shortcut-hint kbd{padding:2px 6px;border-radius:4px;background:rgba(184,147,90,.2);font-family:monospace;font-size:10px;color:var(--goldL)}
+
+.hidden{display:none}
+</style>
+</head>
+<body>
+<div id="app"></div>
+
+<svg width="0" height="0" style="position:absolute"><defs>
+<symbol id="i-back" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></symbol>
+<symbol id="i-x" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 6 6 18M6 6l12 12"/></symbol>
+<symbol id="i-check" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 6 9 17l-5-5"/></symbol>
+<symbol id="i-alert" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M12 8v4M12 16h.01"/></symbol>
+<symbol id="i-file" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6"/></symbol>
+<symbol id="i-pkg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m7.5 4.27 9 5.15"/><path d="M21 8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16Z"/><path d="m3.3 7 8.7 5 8.7-5M12 22V12"/></symbol>
+<symbol id="i-pin" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></symbol>
+<symbol id="i-globe" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M2 12h20M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10Z"/></symbol>
+<symbol id="i-lang" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m5 8 6 6M4 14l6-6 2-3M2 5h12M7 2h1M22 22l-5-10-5 10M14 18h6"/></symbol>
+<symbol id="i-coffee" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v2M14 2v2M16 8a1 1 0 0 1 1 1v8a6 6 0 0 1-6 6H7a6 6 0 0 1-6-6V9a1 1 0 0 1 1-1h14ZM18 8h2a4 4 0 1 1 0 8h-2"/></symbol>
+<symbol id="i-spark" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.94 14.66A4 4 0 0 1 5 10V9.94M14.66 9.94A4 4 0 0 1 10 5M14.66 14.06A4 4 0 0 1 19.6 19.6L20 20"/><path d="m9 9 1.94 1.94M14.06 14.06 16 16"/></symbol>
+<symbol id="i-pencil" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21.174 6.812a1 1 0 0 0-3.986-3.987L3.842 16.174a2 2 0 0 0-.5.83l-1.321 4.352a.5.5 0 0 0 .623.622l4.353-1.32a2 2 0 0 0 .83-.497z"/><path d="m15 5 4 4"/></symbol>
+<symbol id="i-arrow" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></symbol>
+<symbol id="i-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m18 15-6-6-6 6"/></symbol>
+<symbol id="i-chevd" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m6 9 6 6 6-6"/></symbol>
+<symbol id="i-refresh" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8M21 3v5h-5M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16M3 21v-5h5"/></symbol>
+<symbol id="i-msg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M7.9 20A9 9 0 1 0 4 16.1L2 22Z"/></symbol>
+<symbol id="i-send" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14.536 21.686a.5.5 0 0 0 .937-.024l6.5-19a.496.496 0 0 0-.635-.635l-19 6.5a.5.5 0 0 0-.024.937l7.93 3.18a2 2 0 0 1 1.112 1.11z"/><path d="m21.854 2.147-10.94 10.939"/></symbol>
+<symbol id="i-img" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="18" height="18" x="3" y="3" rx="2"/><circle cx="9" cy="9" r="2"/><path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/></symbol>
+<symbol id="i-vid" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m22 8-6 4 6 4V8Z"/><rect width="14" height="12" x="2" y="6" rx="2"/></symbol>
+<symbol id="i-kb" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 8h.01M12 8h.01M14 8h.01M10 12h.01M12 12h.01M14 12h.01M8 16h.01M16 8h.01M8 12h.01M16 12h.01M9 16h6M6 6h12a2 2 0 0 1 2 2v8a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2Z"/></symbol>
+<symbol id="i-cmd" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 6v12a3 3 0 1 0 3-3H6a3 3 0 1 0 3 3V6a3 3 0 1 0-3 3h12a3 3 0 1 0-3-3Z"/></symbol>
+<symbol id="i-plus" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 5v14M5 12h14"/></symbol>
+
+<symbol id="i-tea-leaf" viewBox="0 0 80 80" fill="none">
+<defs><linearGradient id="leafGoldGrad" x1="0" y1="0" x2="80" y2="80"><stop offset="0" stop-color="#D4B07A"/><stop offset=".5" stop-color="#B8935A"/><stop offset="1" stop-color="#8B6B3D"/></linearGradient></defs>
+<path d="M40 46 C 26 38, 16 28, 16 16 C 28 16, 38 28, 40 42 Z" stroke="url(#leafGoldGrad)" stroke-width="1.5" stroke-linejoin="round" fill="rgba(184,147,90,0.08)"/>
+<path d="M40 46 C 54 38, 64 28, 64 16 C 52 16, 42 28, 40 42 Z" stroke="url(#leafGoldGrad)" stroke-width="1.5" stroke-linejoin="round" fill="rgba(184,147,90,0.08)"/>
+<path d="M40 72 L 40 16" stroke="url(#leafGoldGrad)" stroke-width="1.2" stroke-linecap="round"/>
+<circle cx="40" cy="10" r="3" stroke="url(#leafGoldGrad)" stroke-width="1.2" fill="rgba(184,147,90,0.25)"/>
+<path d="M40 38 L 26 30" stroke="url(#leafGoldGrad)" stroke-width=".8" stroke-linecap="round" opacity=".7"/>
+<path d="M40 46 L 20 38" stroke="url(#leafGoldGrad)" stroke-width=".8" stroke-linecap="round" opacity=".7"/>
+<path d="M40 54 L 26 50" stroke="url(#leafGoldGrad)" stroke-width=".8" stroke-linecap="round" opacity=".7"/>
+<path d="M40 38 L 54 30" stroke="url(#leafGoldGrad)" stroke-width=".8" stroke-linecap="round" opacity=".7"/>
+<path d="M40 46 L 60 38" stroke="url(#leafGoldGrad)" stroke-width=".8" stroke-linecap="round" opacity=".7"/>
+<path d="M40 54 L 54 50" stroke="url(#leafGoldGrad)" stroke-width=".8" stroke-linecap="round" opacity=".7"/>
+</symbol>
+
+<symbol id="i-bama-horse" viewBox="0 0 120 100" fill="none">
+<path d="M28 72 C26 62 28 55 32 50 C36 45 44 42 52 44 C58 46 64 52 68 60 C72 68 68 75 62 78 C56 81 48 78 44 72 C40 66 36 58 32 52 L28 72 Z" fill="#FF6B1A"/>
+<path d="M28 72 L32 68 L38 68 L42 64 L46 68 L52 68 L58 64 L64 68 L68 72 L74 70 L78 74 L74 78 L68 76 L62 80 L56 76 L50 80 L44 76 L38 80 L32 76 L28 80 Z" fill="#FF6B1A"/>
+<path d="M52 44 C60 36 70 32 78 34 C86 36 92 42 96 50 C98 56 96 64 92 70 L88 74 C84 76 80 74 78 70 L74 62 C70 54 62 48 52 44 Z" fill="#FF6B1A"/>
+<path d="M78 34 C82 32 88 30 92 28 L96 32 C98 36 96 42 92 46 L88 42 C84 38 78 36 78 34 Z" fill="#FF6B1A"/>
+<path d="M92 28 L94 36 L100 34 L102 40 L96 42 L94 50 L92 46 Z" fill="#FF6B1A"/>
+<path d="M52 44 L56 40 C64 34 72 30 80 32" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+<path d="M58 48 L64 42 C72 36 80 32 88 36" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+<path d="M64 52 L72 46 C80 40 88 38 92 44" stroke="#fff" stroke-width="4" stroke-linecap="round"/>
+<path d="M36 78 L40 70 L44 78" fill="#FF6B1A"/>
+<path d="M68 76 L72 68 L76 76" fill="#FF6B1A"/>
+<text x="60" y="90" text-anchor="middle" font-family="SimSun, Noto Serif SC, serif" font-weight="700" font-size="16" fill="#C2613B">八马茶业</text>
+<text x="60" y="97" text-anchor="middle" font-family="Inter, sans-serif" font-weight="600" font-size="9" fill="#C2613B" letter-spacing="2">BAMA TEA</text>
+</symbol>
+
+<symbol id="i-yu-leaf" viewBox="0 0 64 64" fill="none">
+<defs>
+<linearGradient id="yuGold" x1="0" y1="0" x2="64" y2="64">
+<stop offset="0" stop-color="#D4B07A"/><stop offset=".5" stop-color="#B8935A"/><stop offset="1" stop-color="#8B6B3D"/>
+</linearGradient>
+</defs>
+<text x="32" y="44" text-anchor="middle" font-family="Noto Serif SC, serif" font-weight="700" font-size="36" fill="url(#yuGold)">语</text>
+<g transform="translate(22, 14)">
+<path d="M 6 2 C 10 0, 14 2, 14 6 C 14 10, 10 12, 6 12 C 2 12, 0 10, 0 6 C 0 2, 2 0, 6 2 Z" fill="none" stroke="url(#yuGold)" stroke-width="1.5" stroke-linejoin="round"/>
+<path d="M 6 2 L 6 12" stroke="url(#yuGold)" stroke-width="1" stroke-linecap="round"/>
+<path d="M 6 5 L 10 3" stroke="url(#yuGold)" stroke-width=".6" stroke-linecap="round"/>
+<path d="M 6 7 L 10 6" stroke="url(#yuGold)" stroke-width=".6" stroke-linecap="round"/>
+<path d="M 6 9 L 10 8" stroke="url(#yuGold)" stroke-width=".6" stroke-linecap="round"/>
+<path d="M 6 5 L 2 3" stroke="url(#yuGold)" stroke-width=".6" stroke-linecap="round"/>
+<path d="M 6 7 L 2 6" stroke="url(#yuGold)" stroke-width=".6" stroke-linecap="round"/>
+<path d="M 6 9 L 2 8" stroke="url(#yuGold)" stroke-width=".6" stroke-linecap="round"/>
+</g>
+</symbol>
+</defs></svg>
+
+<script src="api.js"></script>
+<script>
+const S={
+  page:"home",
+  edition:"domestic",
+  mode:null,
+  currentHistoryId:null,
+  history:[],
+  copySel:{taskType:"",teaCategory:"",targetConsumer:"",tone:"温润亲切",length:"中（80-200字）",timeNode:"",language:"en",flavorReference:"none",giftScene:""},
+  matSel:{content:"",modality:"",style:"国风",platform:"",teaCategory:"",language:"en",targetConsumer:"",flavorReference:"none",tone:"温润亲切",length:"中（80-200字）",giftScene:""},
+  copyConfirmed:false,matConfirmed:false,
+  messages:[],
+  typing:false,
+  awaitingInput:false,
+  preOpen:false,preMode:null,preField:null,
+  customTimeInput:"",
+  curTimeCat:""
+};
+
+const STORAGE_PREFIX="bamaChayu_state_";
+const STORAGE_MAX_HISTORY=100;
+
+function storageKey(edition){return STORAGE_PREFIX+(edition||S.edition);}
+
+function saveStateToStorage(){
+  try{
+    const payload={
+      history:S.history.slice(0,STORAGE_MAX_HISTORY),
+      currentHistoryId:S.currentHistoryId,
+      messages:S.messages,
+      mode:S.mode,
+      copySel:S.copySel,
+      matSel:S.matSel,
+      copyConfirmed:S.copyConfirmed,
+      matConfirmed:S.matConfirmed,
+      savedAt:Date.now()
+    };
+    localStorage.setItem(storageKey(S.edition),JSON.stringify(payload));
+  }catch(e){console.warn("saveStateToStorage failed:",e);}
+}
+
+function loadStateFromStorage(edition){
+  try{
+    const raw=localStorage.getItem(storageKey(edition));
+    if(!raw)return null;
+    const data=JSON.parse(raw);
+    if(!data||!Array.isArray(data.history))return null;
+    return data;
+  }catch(e){console.warn("loadStateFromStorage failed:",e);return null;}
+}
+
+function applyStoredState(data){
+  if(!data)return false;
+  S.history=data.history.slice(0,STORAGE_MAX_HISTORY);
+  S.currentHistoryId=data.currentHistoryId||null;
+  S.messages=Array.isArray(data.messages)?data.messages:[];
+  S.mode=data.mode||null;
+  S.copySel=data.copySel||S.copySel;
+  S.matSel=data.matSel||S.matSel;
+  S.copyConfirmed=!!data.copyConfirmed;
+  S.matConfirmed=!!data.matConfirmed;
+  S.typing=false;
+  S.awaitingInput=false;
+  return true;
+}
+
+function clearStoredState(edition){
+  try{localStorage.removeItem(storageKey(edition||S.edition));}catch(e){}
+}
+
+const TEA_CATEGORIES=["赛珍珠铁观音","牛一大红袍","鼎红金骏眉"];
+const GIFT_SCENES=[
+  {value:"self",label:"自饮",desc:"日常品鉴，自得其乐"},
+  {value:"elder",label:"送长辈",desc:"表达敬意与孝心"},
+  {value:"colleague",label:"送同事",desc:"职场往来，得体之选"},
+  {value:"friend",label:"送朋友",desc:"分享茶香，情谊绵长"},
+  {value:"business",label:"商务送礼",desc:"高端礼遇，彰显品味"}
+];
+const TARGET_CONSUMERS=[
+  {value:"beginner",label:"入门级茶友",desc:"刚入门，需要通俗易懂的描述"},
+  {value:"intermediate",label:"进阶级茶友",desc:"知道基本品类，能品出明显风味"},
+  {value:"expert",label:"专业级茶友",desc:"追求专业术语与产地细节"}
+];
+const TONES=["温润亲切","专业严谨","诗意古风","活泼年轻","商务克制"];
+const LENGTHS=["短（80字内）","中（80-200字）","长（200字以上）"];
+const TIME_NODE_CATEGORIES=["法定节日","传统节气","购物节","日常零售","其他"];
+const LEGAL_HOLIDAYS=["春节","清明节","劳动节","端午节","中秋节","国庆节"];
+const TRADITIONAL_SOLAR_TERMS=["立春","清明","谷雨","立夏","小满","芒种","夏至","小暑","大暑","立秋","白露","秋分","霜降","立冬","冬至","大寒"];
+const SHOPPING_FESTIVALS=["618","双11","双12","年货节"];
+const OVERSEAS_TIME_NODES=["传统中华节日","海外本土节日","商业购物节","文化主题日","日常营销节点"];
+const OVERSEAS_LANGUAGES=[{value:"en",label:"English"},{value:"ja",label:"日本語"},{value:"ko",label:"한국어"}];
+const FLAVOR_REFERENCES=[
+  {value:"coffee",label:"参考咖啡风味体系",desc:""},
+  {value:"wine",label:"参考红酒风味体系",desc:""},
+  {value:"none",label:"否，不参考",desc:"适配海外华人群体"}
+];
+const MATERIAL_CONTENTS=[{value:"tea-marketing",label:"茶叶营销",desc:"突出商品卖点、促销、礼盒场景"},{value:"tea-culture",label:"茶文化",desc:"传播茶道、产地、工艺故事"}];
+const MODALITIES=[{value:"image",label:"图片"},{value:"video",label:"视频"}];
+const MATERIAL_STYLES=["年轻","商务","国风"];
+const DOMESTIC_PLATFORMS=["小红书","抖音","微信视频号"];
+const OVERSEAS_PLATFORMS=["Instagram","TikTok","YouTube"];
+
+// 注：成分/维度/概览知识全部来源于后端接口（/api/teas/{id}/domestic-expression 等），
+// 前端不再保留任何 mock 知识库，确保所有文案、对话、物料产出均由后端真实生成。
+
+const h=(tag,cls)=>{const e=document.createElement(tag);if(cls)e.className=cls;return e;};
+const svg=(id)=>`<svg><use href="#i-${id}"/></svg>`;
+const wait=ms=>new Promise(r=>setTimeout(r,ms));
+function fuzzyMatch(input,cands){const n=input.trim().toLowerCase();if(!n)return null;for(const c of cands){if(c.toLowerCase()===n)return c;}for(const c of cands){if(c.toLowerCase().includes(n)||n.includes(c.toLowerCase()))return c;}return null;}
+function consumerLabel(v){const c=TARGET_CONSUMERS.find(x=>x.value===v);return c?c.label:"";}
+function flavorLabel(v){const f=FLAVOR_REFERENCES.find(x=>x.value===v);return f?f.label:"";}
+function giftSceneLabel(v){const g=GIFT_SCENES.find(x=>x.value===v);return g?g.label:"";}
+function langLabel(v){const l=OVERSEAS_LANGUAGES.find(x=>x.value===v);return l?l.label:"";}
+function contentLabel(v){const c=MATERIAL_CONTENTS.find(x=>x.value===v);return c?c.label:"";}
+function modalityLabel(v){const m=MODALITIES.find(x=>x.value===v);return m?m.label:"";}
+function taskTypeLabel(v){return v==="component-to-flavor"?"成分→风味":v==="vague-to-vivid"?"模糊→形象描述":"";}
+
+function formatTime(ts){
+  const now=Date.now();
+  const diff=now-ts;
+  const day=24*60*60*1000;
+  if(diff<day)return "今天";
+  if(diff<2*day)return "昨天";
+  const d=new Date(ts);
+  return `${d.getMonth()+1}/${d.getDate()}`;
+}
+
+function getCurrentHistory(){
+  if(!S.currentHistoryId)return null;
+  return S.history.find(h=>h.id===S.currentHistoryId);
+}
+
+function saveCurrentToHistory(){
+  const hist=getCurrentHistory();
+  if(!hist)return;
+  hist.messages=[...S.messages];
+  hist.copySel={...S.copySel};
+  hist.matSel={...S.matSel};
+  hist.copyConfirmed=S.copyConfirmed;
+  hist.matConfirmed=S.matConfirmed;
+  hist.mode=S.mode;
+  saveStateToStorage();
+}
+
+function createNewHistory(mode){
+  const id="hist-"+Date.now()+"-"+Math.random().toString(36).slice(2,7);
+  const tea=(mode==="copy"?S.copySel.teaCategory:S.matSel.teaCategory)||"茶叶";
+  const modeLabel=mode==="copy"?"文案":"物料";
+  const consumer=consumerLabel(mode==="copy"?S.copySel.targetConsumer:S.matSel.targetConsumer)||"";
+  const record={
+    id,
+    title:`${tea} · ${modeLabel}`,
+    subtitle:consumer||"新对话",
+    tea,
+    mode,
+    consumer,
+    keyword:"",
+    time:Date.now(),
+    messages:[],
+    copySel:{...S.copySel},
+    matSel:{...S.matSel},
+    copyConfirmed:S.copyConfirmed,
+    matConfirmed:S.matConfirmed,
+    confirmed:false
+  };
+  S.history.unshift(record);
+  S.currentHistoryId=id;
+  saveStateToStorage();
+  return record;
+}
+
+function switchHistory(id){
+  saveCurrentToHistory();
+  const hist=S.history.find(h=>h.id===id);
+  if(!hist)return;
+  S.currentHistoryId=id;
+  S.mode=hist.mode;
+  S.copySel={...hist.copySel};
+  S.matSel={...hist.matSel};
+  S.copyConfirmed=hist.copyConfirmed;
+  S.matConfirmed=hist.matConfirmed;
+  S.messages=[...hist.messages];
+  S.typing=false;
+  S.awaitingInput=false;
+  saveStateToStorage();
+  renderWorkbenchOnly();
+}
+
+const app=document.getElementById("app");
+
+function render(){
+  app.innerHTML="";
+  if(S.page==="home"){renderHome();}
+  else {renderWorkbench();}
+  if(S.preOpen){renderModal();bindModalEvents();}
+}
+
+function renderWorkbenchOnly(){
+  const wb=document.querySelector(".wb");
+  if(!wb)return;
+  const main=wb.querySelector(".main");
+  const sidebar=wb.querySelector(".sidebar");
+  const historyPanel=wb.querySelector(".history-panel");
+  if(sidebar)sidebar.outerHTML=renderSidebar();
+  if(historyPanel)historyPanel.outerHTML=renderHistoryPanel();
+  if(main){
+    main.innerHTML=`
+      ${renderSelBar()}
+      <div class="chat-area" id="chatArea">${renderChatArea()}</div>
+      <div class="chat-input"><form id="chatForm"><input id="chatInput" type="text" placeholder="输入您的问题..." autocomplete="off"/><button type="submit">${svg("send")}<span>发送</span></button></form></div>
+    `;
+  }
+  bindSidebar();
+  bindChat();
+  bindHistoryPanel();
+  bindSelBar();
+}
+
+function renderHome(){
+  const page=h("div","page home paper");
+  page.innerHTML=`
+    <div class="home-wrap">
+      <div class="bg-deco">
+        ${[[8,18,0,72,15],[88,12,1.5,58,-25],[72,58,.8,84,35],[18,72,2.2,60,-20],[50,38,1.2,48,45],[94,78,.5,66,-35],[30,10,1.8,40,60],[75,30,0.5,44,-45]].map(p=>`<svg class="tea-leaf" style="left:${p[0]}%;top:${p[1]}%;width:${p[3]}px;height:${p[3]}px;transform:rotate(${p[4]}deg);animation:steam 6s ease-in-out ${p[2]}s infinite"><use href="#i-tea-leaf"/></svg>`).join("")}
+        <div style="position:absolute;left:-200px;top:-100px;width:700px;height:700px;border-radius:50%;background:rgba(184,147,90,.1);filter:blur(100px)"></div>
+        <div style="position:absolute;right:-200px;bottom:-100px;width:700px;height:700px;border-radius:50%;background:rgba(45,74,62,.1);filter:blur(100px)"></div>
+      </div>
+      <header class="topbar">
+        <div class="logo">
+          <img class="logo-mark" src="bama-logo.png" width="48" height="48" alt="八马茶业" style="object-fit:contain;object-position:center"/>
+          <div class="logo-text"><span class="t">八马茶业</span><span class="s">BAMA TEA</span></div>
+        </div>
+        <div class="topnav">
+          <a href="#overview" class="nav-secondary">${svg("spark")}<span>功能概览</span></a>
+          <a href="#entry" class="nav-primary"><span>进入工作台</span>${svg("arrow")}</a>
+          <span class="tag">v1.0 · 内部 Demo</span>
+        </div>
+      </header>
+      <section class="hero">
+        <div class="hero-sub anim-fade"><span class="line"></span><span class="seal" style="padding:4px 12px;font-size:11px">八马茶业 · 营销赋能</span><span class="line r"></span></div>
+        <h1 class="anim-up">八马<span class="gold">茶语</span></h1>
+        <div class="anim-up" style="animation-delay:.1s">
+          <p class="hero-en">Ba Ma Cha Yu · AI Marketing Assistant</p>
+          <p class="hero-desc" style="color:#D4A574">会写文案，会出物料的AI营销搭子 <span style="color:var(--gold)">·</span> 把茶文化翻译给世界听</p>
+        </div>
+        <div class="hero-bowl anim-up" style="animation-delay:.2s">
+          <div class="inner">
+            <svg width="40" height="40" viewBox="0 0 64 64" style="display:block">
+              <defs>
+                <linearGradient id="heroYuGold" x1="0" y1="0" x2="64" y2="64">
+                  <stop offset="0" stop-color="#D4B07A"/><stop offset=".5" stop-color="#B8935A"/><stop offset="1" stop-color="#8B6B3D"/>
+                </linearGradient>
+              </defs>
+              <text x="32" y="44" text-anchor="middle" font-family="Noto Serif SC, serif" font-weight="700" font-size="32" fill="url(#heroYuGold)">语</text>
+            </svg>
+          </div>
+          <span class="ripple"></span><span class="ripple d"></span>
+        </div>
+        <div class="hero-cta-row anim-up" style="animation-delay:.3s">
+          <button class="hero-cta" onclick="document.getElementById('overview').scrollIntoView({behavior:'smooth'})">${svg("spark")}<span>先了解茶语能做什么</span>${svg("chevd")}</button>
+          <button class="hero-cta-primary" onclick="goWorkbench('domestic')"><span>直接进入工作台</span>${svg("arrow")}</button>
+        </div>
+      </section>
+      <section class="block" id="overview">
+        ${renderFeatureOverview()}
+      </section>
+      <section class="block" id="entry">
+        <div class="sec-head">
+          <div class="sec-kicker"><span class="l"></span><span>Choose Your Market</span><span class="l"></span></div>
+          <h2>选择您要进入的工作台</h2>
+          <p>国内 / 海外两套独立工作台，文案与物料两侧并行</p>
+        </div>
+        <div class="entry-grid">
+          ${renderEntryCard("domestic")}
+          ${renderEntryCard("overseas")}
+        </div>
+      </section>
+      <footer class="foot">
+        <p>八马茶业 © ${new Date().getFullYear()} · 「八马茶语」AI 营销助手 · 内部演示版本</p>
+        <p class="en">"Pour a cup of tea, pour a cup of words."</p>
+      </footer>
+    </div>`;
+  page.querySelectorAll(".entry-card").forEach(c=>c.addEventListener("click",()=>{goWorkbench(c.dataset.ed);}));
+  app.appendChild(page);
+}
+
+function renderFeatureOverview(){
+  const feats=[
+    {ic:"file",cls:"gold",title:"文案",sub:"Copywriting",desc:"把茶叶的专业成分，翻译成消费者听得懂的风味语言；把模糊的描述，转化为具象的形象表达。",bullets:["支持为不同消费者定制营销文案","知识库覆盖八马主要茶叶品类"]},
+    {ic:"pkg",cls:"moss",title:"物料",sub:"Materials",desc:"一键生成茶叶营销与茶文化视觉物料，多模态、多风格、多平台，省去找设计师的中间环节。",bullets:["图片 / 视频双模态","年轻 / 商务 / 国风三风格","向海外营销八马产品","让世界看见茶业故事"]}
+  ];
+  return `<div class="sec-head"><div class="sec-kicker">${svg("spark")}<span>What can Ba Ma Cha Yu do</span>${svg("spark")}</div><h2>茶语能为你做什么</h2><p>一个会写茶文案、会出茶物料的工作搭子，覆盖国内与海外两大市场</p></div>
+  <div class="feat-grid">${feats.map((f,i)=>`<div class="feat-card anim-up" style="animation-delay:${i*.12}s">
+    <div class="glow"></div><span class="num">0${i+1}</span>
+    <div class="feat-head"><div class="feat-icon ${f.cls}">${svg(f.ic)}</div><div><div class="feat-title">${f.title}</div><div class="feat-sub">${f.sub}</div></div></div>
+    <p class="feat-desc">${f.desc}</p>
+    <ul class="feat-list">${f.bullets.map(b=>`<li>${b}</li>`).join("")}</ul>
+  </div>`).join("")}</div>`;
+}
+function renderEntryCard(ed){
+  const isD=ed==="domestic";
+  const cfg=isD?{title:"面向国内",sub:"Domestic Market",desc:"深耕中文语境，匹配国内营销节点与茶友不同水平",tags:[["中文文案","pin"],["适配不同茶友","globe"],["节日礼季节点","globe"]],ic:"pin",cta:"进入国内版",seal:"中"}
+  :{title:"面向海外",sub:"Overseas Market",desc:"支持多语言输出，可对照咖啡 / 红酒风味体系，跨越文化语境",tags:[["英 / 日 / 韩多语言","lang"],["海外营销节点","globe"],["咖啡 / 红酒风味对照","coffee"]],ic:"globe",cta:"进入海外版",seal:"洋"};
+  return `<button class="entry-card ${isD?'dom':'ovs'} anim-up" data-ed="${ed}" style="animation-delay:${isD?0:.15}s">
+    <div class="glow"></div>
+    <span class="seal corner-seal" style="padding:4px 8px;font-size:10px">${cfg.seal}</span>
+    <div class="entry-head"><div class="entry-ic">${svg(cfg.ic)}</div><div><div class="entry-title">${cfg.title}</div><div class="entry-sub">${cfg.sub}</div></div></div>
+    <p class="entry-desc">${cfg.desc}</p>
+    <div class="entry-tags">${cfg.tags.map(t=>`<span class="entry-tag">${svg(t[1])}${t[0]}</span>`).join("")}</div>
+    <div class="entry-cta"><span>${cfg.cta}</span><span class="arr">${svg("arrow")}</span></div>
+  </button>`;
+}
+
+function goWorkbench(ed){
+  S.page=ed;S.edition=ed;
+  S.preOpen=false;S.preMode=null;S.preField=null;
+  const stored=loadStateFromStorage(ed);
+  if(stored&&applyStoredState(stored)){
+    // 已恢复该版本的历史与状态，直接进入工作台
+    render();
+    return;
+  }
+  S.mode=null;S.copyConfirmed=false;S.matConfirmed=false;S.messages=[];
+  S.history=[];S.currentHistoryId=null;
+  render();
+}
+
+function renderWorkbench(){
+  const page=h("div","page");
+  page.innerHTML=`<div class="wb paper">
+    <div class="wb-bg"><div class="b1"></div><div class="b2"></div></div>
+    ${renderSidebar()}
+    ${renderHistoryPanel()}
+    <div class="main">
+      ${renderSelBar()}
+      <div class="chat-area" id="chatArea">${renderChatArea()}</div>
+      <div class="chat-input"><form id="chatForm"><input id="chatInput" type="text" placeholder="输入您的问题..." autocomplete="off"/><button type="submit">${svg("send")}<span>发送</span></button></form></div>
+    </div>
+  </div>`;
+  app.appendChild(page);
+  bindSidebar();
+  bindChat();
+  bindHistoryPanel();
+  bindSelBar();
+}
+
+function renderSidebar(){
+  const isOvs=S.edition==="overseas";
+  return `<aside class="sidebar">
+    <span class="gold-line"></span>
+    <div class="sb-top">
+      <button class="sb-btn" title="返回主页" onclick="S.page='home';render()">${svg("back")}</button>
+      <div class="sb-logo-wrap">
+        <div class="sb-logo-circle">
+          <svg width="40" height="40" viewBox="0 0 64 64" style="display:block">
+            <defs>
+              <linearGradient id="sbYuGold" x1="0" y1="0" x2="64" y2="64">
+                <stop offset="0" stop-color="#D4B07A"/><stop offset=".5" stop-color="#B8935A"/><stop offset="1" stop-color="#8B6B3D"/>
+              </linearGradient>
+            </defs>
+            <text x="32" y="44" text-anchor="middle" font-family="Noto Serif SC, serif" font-weight="700" font-size="28" fill="url(#sbYuGold)">语</text>
+          </svg>
+        </div>
+        <div class="sb-brand"><span class="t">八马</span><span class="s">BA MA</span></div>
+      </div>
+    </div>
+    <nav class="sb-nav">
+      ${["copy","material"].map(m=>{
+        const act=S.mode===m;
+        const conf=m==="copy"?S.copyConfirmed:S.matConfirmed;
+        const ic=m==="copy"?"file":"pkg";
+        const lb=m==="copy"?"文案":"物料";
+        return `<button class="sb-item ${act?'active':''}" onclick="switchMode('${m}')">
+          ${conf?'<span class="dot"></span>':''}
+          ${svg(ic)}<span class="lb">${lb}</span>
+        </button>`;
+      }).join("")}
+    </nav>
+    <div class="edition-switch">
+      <div class="edition-btn">
+        <span class="lb">${isOvs?'海外':'国内'}</span>
+        <span class="sb">${isOvs?'OVERSEAS':'DOMESTIC'}</span>
+      </div>
+      <div class="edition-menu">
+        <button class="${!isOvs?'cur':''}" onclick="switchEdition('domestic')">国内版</button>
+        <button class="${isOvs?'cur':''}" onclick="switchEdition('overseas')">海外版</button>
+      </div>
+    </div>
+  </aside>`;
+}
+
+function renderHistoryPanel(){
+  return `<div class="history-panel">
+    <div class="history-head">
+      <span class="htitle">对话历史</span>
+      <button class="new-btn" onclick="newChat()">${svg("plus")}<span>新建对话</span></button>
+    </div>
+    <div class="history-list" id="historyList">
+      ${S.history.length===0?`<div style="padding:20px;text-align:center;font-size:12px;color:rgba(212,115,79,.4)">暂无对话记录<br>开始新对话后将显示在这里</div>`:
+      S.history.map(h=>`<div class="history-item ${h.id===S.currentHistoryId?'active':''}" data-id="${h.id}">
+        <div class="ht">${h.title}</div>
+        <div class="hs">${h.subtitle}</div>
+        <div class="htime">${formatTime(h.time)}</div>
+      </div>`).join("")}
+    </div>
+  </div>`;
+}
+
+function bindHistoryPanel(){
+  const list=document.getElementById("historyList");
+  if(!list)return;
+  list.querySelectorAll(".history-item").forEach(item=>{
+    item.addEventListener("click",()=>{
+      const id=item.dataset.id;
+      switchHistory(id);
+    });
+  });
+}
+
+function newChat(){
+  saveCurrentToHistory();
+  S.copyConfirmed=false;S.matConfirmed=false;
+  S.messages=[];
+  S.currentHistoryId=null;
+  saveStateToStorage();
+  S.preOpen=true;S.preMode=S.mode||"copy";S.preField=null;
+  if(!S.mode)S.mode="copy";
+  renderWorkbenchOnly();
+  renderModal();
+  bindModalEvents();
+}
+
+function switchMode(m){
+  saveCurrentToHistory();
+  S.mode=m;
+  const conf=m==="copy"?S.copyConfirmed:S.matConfirmed;
+  const hist=S.history.find(h=>h.mode===m&&h.confirmed);
+  if(hist){
+    switchHistory(hist.id);
+    return;
+  }
+  if(!conf){
+    S.messages=[];
+    S.currentHistoryId=null;
+    S.preOpen=true;S.preMode=m;S.preField=null;
+    renderWorkbenchOnly();
+    renderModal();
+    bindModalEvents();
+  }else{
+    renderWorkbenchOnly();
+  }
+}
+
+function switchEdition(ed){
+  if(ed===S.edition)return;
+  saveCurrentToHistory();
+  S.edition=ed;S.page=ed;
+  S.preOpen=false;S.preMode=null;S.preField=null;
+  const stored=loadStateFromStorage(ed);
+  if(stored&&applyStoredState(stored)){
+    // 已恢复目标版本的历史与状态
+    render();
+    return;
+  }
+  S.copyConfirmed=false;S.matConfirmed=false;
+  S.copySel={taskType:"",teaCategory:"",targetConsumer:"",tone:"温润亲切",length:"中（80-200字）",timeNode:"",language:"en",flavorReference:"none",giftScene:""};
+  S.matSel={content:"",modality:"",style:"国风",platform:"",teaCategory:"",language:"en",targetConsumer:"",flavorReference:"none",tone:"温润亲切",length:"中（80-200字）",giftScene:""};
+  S.messages=[];S.mode="copy";
+  S.history=[];S.currentHistoryId=null;
+  S.preOpen=true;S.preMode="copy";S.preField=null;
+  render();
+}
+
+function renderSelBar(){
+  if(!S.mode)return "";
+  const isOvs=S.edition==="overseas";
+  const isCopy=S.mode==="copy";
+  const sel=isCopy?S.copySel:S.matSel;
+  const pills=[];
+  if(isCopy){
+    pills.push(["任务",taskTypeLabel(sel.taskType),"taskType"]);
+    pills.push(["品类",sel.teaCategory,"teaCategory"]);
+    pills.push(["消费者",consumerLabel(sel.targetConsumer),"targetConsumer"]);
+    pills.push(["语气",sel.tone,"tone"]);
+    pills.push(["长度",sel.length,"length"]);
+    pills.push(["节点",sel.timeNode||"","timeNode"]);
+    pills.push(["送礼场景",giftSceneLabel(sel.giftScene),"giftScene"]);
+    if(isOvs){
+      pills.push(["语言",langLabel(sel.language),"language"]);
+      pills.push(["风味体系",flavorLabel(sel.flavorReference),"flavorReference"]);
+    }
+  }else{
+    pills.push(["内容",contentLabel(sel.content),"content"]);
+    pills.push(["模态",modalityLabel(sel.modality),"modality"]);
+    pills.push(["风格",sel.style,"style"]);
+    pills.push(["平台",sel.platform,"platform"]);
+    pills.push(["送礼场景",giftSceneLabel(sel.giftScene),"giftScene"]);
+    if(isOvs){
+      pills.push(["品类",sel.teaCategory||"","teaCategory"]);
+      pills.push(["语言",langLabel(sel.language),"language"]);
+      pills.push(["消费者",consumerLabel(sel.targetConsumer),"targetConsumer"]);
+      pills.push(["风味体系",flavorLabel(sel.flavorReference),"flavorReference"]);
+      pills.push(["语气",sel.tone||"","tone"]);
+      pills.push(["长度",sel.length||"","length"]);
+    }
+  }
+  return `<div class="selbar">
+    <div class="title">${svg("spark")}<span class="lb">${isCopy?'文案':'物料'}</span><span class="hint">· 点击修改</span></div>
+    <span class="sep"></span>
+    <div class="pills">
+      <button class="pill all-pill" onclick="openAllPreSelect()">${svg("spark")}<span class="lb">整体前置</span>${svg("chevd")}</button>
+      ${pills.map(p=>`<button class="pill" onclick="openFieldEdit('${isCopy?'copy':'material'}','${p[2]}')"><span class="lb">${p[0]}</span><span class="v">${p[1]||'—'}</span>${svg("pencil")}</button>`).join("")}
+    </div>
+  </div>`;
+}
+
+function bindSelBar(){
+}
+
+function openAllPreSelect(){
+  S.preOpen=true;S.preMode=S.mode==="copy"?"copy":"material";S.preField=null;
+  S.customTimeInput="";
+  renderModal();
+  bindModalEvents();
+}
+
+function openFieldEdit(mode,field){
+  S.preOpen=true;S.preMode=mode;S.preField=field;S.customTimeInput="";
+  renderModal();
+  bindModalEvents();
+}
+
+function renderChatArea(){
+  if(S.messages.length===0){
+    return `<div class="chat-empty">
+      <svg class="deco" viewBox="0 0 100 100" fill="none"><circle cx="50" cy="50" r="46" stroke="rgba(184,147,90,.3)" stroke-width="2"/><circle cx="50" cy="50" r="40" stroke="rgba(184,147,90,.5)" stroke-width="1" fill="none" opacity=".5"/><text x="50" y="58" text-anchor="middle" font-family="Noto Serif SC, serif" font-weight="700" font-size="28" fill="rgba(184,147,90,.6)">语</text></svg>
+      <h3>ChaYu 小语已就位</h3>
+      <p>可以选择先完成前置选择 / 直接开始自由对话。<br>可以把茶叶的专业成分翻译成消费者听得懂的风味语言，也可以一键生成茶叶营销物料。</p>
+    </div>`;
+  }
+  let html="";
+  S.messages.forEach(m=>{
+    const isUser=m.role==="user";
+    const av=isUser?"你":"语";
+    if(m.type==="image"){
+      html+=`<div class="msg image"><div class="msg-av">${av}</div><div class="msg-bubble"><img src="${m.imagePrompt}" alt="物料预览"/><div class="caption">${m.content}</div>${renderTraceChain(m.trace)}</div></div>`;
+      return;
+    }
+    let body=m.content;
+    if(m.type==="options"&&m.options){
+      body+=`<div class="msg-opts">${m.options.map(o=>`<button class="msg-opt" onclick="handleOption('${m.optionAction}','${o}')">${o}</button>`).join("")}</div>`;
+    }
+    if(m.type==="result"&&m.candidates){
+      body+=`<div class="msg-opts">${m.candidates.map(o=>`<button class="msg-opt" onclick="handleCandidate('${o}')">${o}</button>`).join("")}</div>`;
+      body+=`<div class="fb-link">${svg("msg")}没找到想要的？点此反馈，帮茶语更聪明</div>`;
+    }
+    if(m.role==="assistant"&&(m.type==="result"||m.type==="image")){
+      body+=renderTraceChain(m.trace);
+    }
+    html+=`<div class="msg ${m.role} ${m.type}"><div class="msg-av">${av}</div><div class="msg-bubble">${body}</div></div>`;
+  });
+  if(S.typing){
+    html+=`<div class="typing"><span class="hint">茶语正在努力输入中</span><span class="dot"></span><span class="dot"></span><span class="dot"></span></div>`;
+  }
+  return html;
+}
+
+function mapTraceData(traceData){
+  if(!traceData)return null;
+  // 优先使用后端返回的 pipeline_stages 字段
+  if(Array.isArray(traceData.pipeline_stages)&&traceData.pipeline_stages.length>0){
+    return traceData.pipeline_stages.map(s=>({
+      key:s.key||s.id||"",
+      label:s.label||s.name||s.key||"",
+      status:s.status||"completed",
+      duration_ms:s.duration_ms!=null?s.duration_ms:null,
+      summary:s.summary||s.metadata&&s.metadata.summary||""
+    }));
+  }
+  // 兼容后端 trace 数组格式：[{level, name, id, summary}]
+  // level 0=知识层, 1=风味层(成分), 2=表达层, 3=物料层
+  // 按 level 升序排列（知识→成分→表达→物料）
+  if(Array.isArray(traceData.trace)&&traceData.trace.length>0){
+    return traceData.trace.slice().sort((a,b)=>(a.level||0)-(b.level||0)).map(t=>({
+      key:t.id||t.name||"",
+      label:t.name||t.id||"",
+      status:"completed",
+      duration_ms:null,
+      summary:t.summary||""
+    }));
+  }
+  return null;
+}
+
+function renderTraceChain(trace){
+  // trace 是 pipeline_stages 数组：[{key, label, status, duration_ms, summary}]
+  if(!Array.isArray(trace)||trace.length===0)return "";
+  const chainHtml=trace.map((s,i)=>{
+    const label=s.label||s.key||("节点"+(i+1));
+    const status=s.status||"pending";
+    const dur=s.duration_ms;
+    const showDur=status==="completed"&&dur!=null;
+    const summary=s.summary?String(s.summary):"";
+    const ic=status==="completed"?"✓":status==="failed"?"!":status==="active"?"●":"○";
+    const node=`<div class="pc-node pc-${status}" title="${summary}">
+      <div class="pc-ic">${ic}</div>
+      <div class="pc-info">
+        <div class="pc-lbl">${label}</div>
+        ${showDur?`<div class="pc-dur">${dur}ms</div>`:""}
+      </div>
+    </div>`;
+    const arrow=i<trace.length-1?`<div class="pc-arr">→</div>`:"";
+    return node+arrow;
+  }).join("");
+  return `<div class="trace-chain">
+    <div class="trace-head"><span class="ic">🧠</span><span>生成逻辑链追溯</span></div>
+    <div class="pc-flow">${chainHtml}</div>
+  </div>`;
+}
+
+function bindSidebar(){}
+function bindChat(){
+  const form=document.getElementById("chatForm");
+  if(!form)return;
+  form.addEventListener("submit",e=>{
+    e.preventDefault();
+    const inp=document.getElementById("chatInput");
+    const text=inp.value.trim();
+    if(!text)return;
+    inp.value="";
+    handleUserInput(text);
+  });
+}
+
+function startCopyChat(){
+  S.messages=[];S.stage="copy:choose-overview-or-specific";
+  const isOvs=S.edition==="overseas";
+  const langSuffix=isOvs&&S.copySel.language?`（输出语言：${{en:"English",ja:"日本語",ko:"한국어"}[S.copySel.language]||""}）`:"";
+  let content,options;
+  if(S.copySel.taskType==="component-to-flavor"){
+    content=`请问您想要对这款「${S.copySel.teaCategory}」的成分与风味关系有整体总览，还是想咨询特定成分呢？${langSuffix}`;
+    options=["整体总览","特定成分"];
+  }else{
+    content=`请问您想要对这款「${S.copySel.teaCategory}」的风味描述有整体总览，还是想咨询特定维度呢（如香气、味道、产地、口感、外形）？${langSuffix}`;
+    options=["整体总览","特定维度"];
+  }
+  pushMessage({role:"assistant",content,type:"options",optionAction:"overview-or-specific",options});
+  
+  const rec=createNewHistory("copy");
+  rec.title=`${S.copySel.teaCategory} · 文案`;
+  rec.subtitle=consumerLabel(S.copySel.targetConsumer);
+  rec.confirmed=true;
+  rec.copyConfirmed=true;
+  
+  updateChatArea();
+  updateHistoryPanel();
+}
+
+function startMaterialChat(){
+  S.messages=[];S.stage="material:choose-confirm";
+  const isOvs=S.edition==="overseas";
+  const tea=isOvs&&S.matSel.teaCategory?S.matSel.teaCategory:"茶叶";
+  const contentLabel=S.matSel.content==="tea-marketing"?"茶叶营销":"茶文化";
+  const modalityLabel=S.matSel.modality==="image"?"图片":"视频";
+  const content=`即将为您生成一张「${tea}」的${contentLabel}${modalityLabel}，风格为「${S.matSel.style}」，平台为「${S.matSel.platform}」，请您等待一会，正在全力为您生成。是否确认生成？`;
+  pushMessage({role:"assistant",content,type:"options",optionAction:"confirm-or-cancel",options:["确认","取消"]});
+  
+  const rec=createNewHistory("material");
+  rec.title=`${tea} · 物料`;
+  rec.subtitle=consumerLabel(S.matSel.targetConsumer)||S.matSel.style;
+  rec.confirmed=true;
+  rec.matConfirmed=true;
+  
+  updateChatArea();
+  updateHistoryPanel();
+}
+
+function updateChatArea(){
+  const area=document.getElementById("chatArea");
+  if(area){
+    area.innerHTML=renderChatArea();
+    area.scrollTop=area.scrollHeight;
+  }
+}
+
+function updateHistoryPanel(){
+  const hp=document.querySelector(".history-panel");
+  if(!hp)return;
+  hp.outerHTML=renderHistoryPanel();
+  bindHistoryPanel();
+}
+
+function updateSelBar(){
+  const sb=document.querySelector(".selbar");
+  if(!sb)return;
+  sb.outerHTML=renderSelBar();
+}
+
+function handleOption(action,label){
+  pushMessage({role:"user",content:label,type:"text"});
+  updateChatArea();
+  if(action==="overview-or-specific"){
+    if(label==="整体总览"){action="overview";}
+    else if(label==="特定成分"||label==="特定维度"){action="specific";}
+  }
+  if(action==="overview"){
+    S.typing=true;updateChatArea();
+    const isOvs=S.edition==="overseas";
+    const apiCall=isOvs?BAMA_API.crossCulturalExpression(S.copySel.teaCategory, S.copySel):BAMA_API.domesticExpression(S.copySel.teaCategory, S.copySel);
+    apiCall.then(r=>{
+      S.typing=false;
+      const d=r.data||{};
+      const outs=d.outputs||{};
+      let body="";
+      if(isOvs){
+        body=[outs.literal_explanation, outs.beginner_analogy, outs.cultural_narrative].filter(Boolean).join("\n\n");
+      }else{
+        body=[outs.story_style, outs.scientific_style, outs.emotional_style].filter(Boolean).join("\n\n");
+      }
+      if(!body)body="（后端返回内容为空）";
+      const traceId=d.trace_id;
+      pushMessage({role:"assistant",content:body,type:"result"});
+      S.stage="done";
+      saveCurrentToHistory();
+      updateChatArea();
+      if(traceId){
+        BAMA_API.getTrace(traceId).then(tr=>{
+          const last=S.messages[S.messages.length-1];
+          if(last&&last.role==="assistant"){
+            last.trace=mapTraceData(tr.data);
+            saveCurrentToHistory();
+            updateChatArea();
+          }
+        }).catch(e=>console.warn("trace 获取失败:",e.message));
+      }
+    }).catch(e=>{
+      S.typing=false;
+      pushMessage({role:"assistant",content:"生成失败："+e.message,type:"text"});
+      S.stage="done";
+      saveCurrentToHistory();
+      updateChatArea();
+    });
+  }else if(action==="specific"){
+    S.stage="copy:await-input";S.awaitingInput=true;
+    S.typing=true;updateChatArea();
+    setTimeout(()=>{
+      S.typing=false;
+      const c=S.copySel.taskType==="component-to-flavor"
+        ?"您想咨询的特定成分是什么？请输入成分名称（如氨基酸、茶多酚、咖啡碱、芳香物质等）。"
+        :"您想咨询的特定维度是什么？请输入维度名称（如香气、味道、产地、口感、外形等）。";
+      pushMessage({role:"assistant",content:c,type:"text"});
+      updateChatArea();
+    },900);
+  }else if(action==="confirm"){
+    S.typing=true;updateChatArea();
+    const tea=S.matSel.teaCategory||"茶叶";
+    const routeId="demo_"+(S.matSel.teaCategory||"tea");
+    BAMA_API.marketingAsset(S.matSel.teaCategory||"赛珍珠铁观音", S.matSel, routeId).then(assetRes=>{
+      const ad=(assetRes.data)||{};
+      const copy=ad.copy||{};
+      const imagePrompt=ad.image_prompt;
+      const traceId=ad.trace_id;
+      if(!imagePrompt){
+        throw new Error("后端未返回 image_prompt");
+      }
+      return BAMA_API.imageGenerate(imagePrompt, S.matSel.teaCategory||"赛珍珠铁观音", S.matSel, routeId).then(imgRes=>{
+        const imgData=imgRes.data||{};
+        const imageUrl=imgData.image_url;
+        const contentLabel=S.matSel.content==="tea-marketing"?"茶叶营销":"茶文化";
+        const modalityLabel=S.matSel.modality==="image"?"图片":"视频";
+        let contentText=`已为您生成「${tea}」的${contentLabel}${modalityLabel}物料。`;
+        if(copy.headline)contentText+="\n\n标题："+copy.headline;
+        if(copy.subheadline)contentText+="\n副标题："+copy.subheadline;
+        if(copy.body)contentText+="\n正文："+copy.body;
+        pushMessage({role:"assistant",content:contentText,type:"image",imagePrompt:imageUrl});
+        S.stage="done";
+        saveCurrentToHistory();
+        updateChatArea();
+        if(traceId){
+          BAMA_API.getTrace(traceId).then(tr=>{
+            const last=S.messages[S.messages.length-1];
+            if(last&&last.role==="assistant"){
+              last.trace=mapTraceData(tr.data);
+              saveCurrentToHistory();
+              updateChatArea();
+            }
+          }).catch(e=>console.warn("trace 获取失败:",e.message));
+        }
+      });
+    }).catch(e=>{
+      S.typing=false;
+      pushMessage({role:"assistant",content:"物料生成失败："+e.message,type:"text"});
+      S.stage="done";
+      saveCurrentToHistory();
+      updateChatArea();
+    });
+  }else if(action==="cancel"){
+    S.typing=true;updateChatArea();
+    setTimeout(()=>{
+      S.typing=false;
+      pushMessage({role:"assistant",content:"好的，已取消本次生成。您可以点击顶部胶囊修改参数后重新发起。",type:"text"});
+      S.stage="done";
+      saveCurrentToHistory();
+      updateChatArea();
+    },700);
+  }
+}
+
+function handleCandidate(c){
+  pushMessage({role:"user",content:c,type:"text"});
+  updateChatArea();
+  S.typing=true;updateChatArea();
+  const isOvs=S.edition==="overseas";
+  const apiCall=isOvs?BAMA_API.crossCulturalExpression(S.copySel.teaCategory, S.copySel):BAMA_API.domesticExpression(S.copySel.teaCategory, S.copySel);
+  apiCall.then(r=>{
+    S.typing=false;
+    const d=r.data||{};
+    const outs=d.outputs||{};
+    let body="";
+    if(isOvs){
+      body=[outs.literal_explanation, outs.beginner_analogy, outs.cultural_narrative].filter(Boolean).join("\n\n");
+    }else{
+      body=[outs.story_style, outs.scientific_style, outs.emotional_style].filter(Boolean).join("\n\n");
+    }
+    if(!body)body="（后端返回内容为空）";
+    pushMessage({role:"assistant",content:body,type:"result"});
+    saveCurrentToHistory();
+    updateChatArea();
+    const traceId=d.trace_id;
+    if(traceId){
+      BAMA_API.getTrace(traceId).then(tr=>{
+        const last=S.messages[S.messages.length-1];
+        if(last&&last.role==="assistant"){
+          last.trace=mapTraceData(tr.data);
+          saveCurrentToHistory();
+          updateChatArea();
+        }
+      }).catch(e=>console.warn("trace 获取失败:",e.message));
+    }
+  }).catch(e=>{
+    S.typing=false;
+    pushMessage({role:"assistant",content:"生成失败："+e.message,type:"text"});
+    saveCurrentToHistory();
+    updateChatArea();
+  });
+}
+
+function handleUserInput(text){
+  pushMessage({role:"user",content:text,type:"text"});
+  S.awaitingInput=false;
+  updateChatArea();
+  S.typing=true;updateChatArea();
+  const isOvs=S.edition==="overseas";
+  const apiCall=isOvs?BAMA_API.crossCulturalExpression(S.copySel.teaCategory, S.copySel):BAMA_API.domesticExpression(S.copySel.teaCategory, S.copySel);
+  apiCall.then(r=>{
+    S.typing=false;
+    const d=r.data||{};
+    const outs=d.outputs||{};
+    let body="";
+    if(isOvs){
+      body=[outs.literal_explanation, outs.beginner_analogy, outs.cultural_narrative].filter(Boolean).join("\n\n");
+    }else{
+      body=[outs.story_style, outs.scientific_style, outs.emotional_style].filter(Boolean).join("\n\n");
+    }
+    if(!body)body="（后端返回内容为空）";
+    pushMessage({role:"assistant",content:body,type:"result"});
+    saveCurrentToHistory();
+    updateChatArea();
+    const traceId=d.trace_id;
+    if(traceId){
+      BAMA_API.getTrace(traceId).then(tr=>{
+        const last=S.messages[S.messages.length-1];
+        if(last&&last.role==="assistant"){
+          last.trace=mapTraceData(tr.data);
+          saveCurrentToHistory();
+          updateChatArea();
+        }
+      }).catch(e=>console.warn("trace 获取失败:",e.message));
+    }
+  }).catch(e=>{
+    S.typing=false;
+    pushMessage({role:"assistant",content:"生成失败："+e.message,type:"text"});
+    saveCurrentToHistory();
+    updateChatArea();
+  });
+}
+
+function pushMessage(m){
+  m.id="msg-"+Date.now()+"-"+Math.random().toString(36).slice(2,7);
+  m.timestamp=Date.now();
+  S.messages.push(m);
+  saveStateToStorage();
+}
+
+function renderModal(){
+  const modal=h("div","modal");
+  const isOvs=S.edition==="overseas";
+  const isCopy=S.preMode==="copy";
+  const isField=!!S.preField;
+  modal.innerHTML=`
+    <div class="mask" onclick="closePreSelect()"></div>
+    <button class="back-btn" onclick="closePreSelect()">
+      <span class="ic">${svg("back")}</span>
+      <span class="lb">返回</span>
+      <span class="kbd">Esc</span>
+    </button>
+    <div class="modal-card ${isField?'single':''}" id="modalCard">
+      <div class="modal-head">
+        <div class="lt">
+          <span class="seal">${isOvs?'海外':'国内'}</span>
+          <div>
+            <div class="ttl">${isCopy?'文案':'物料'}${isField?' · 修改 · '+fieldTitle(S.preField):' · 前置选择'}</div>
+            <div class="sub">${isField?'选择后点击底部「保存修改」生效':((isCopy?!S.copyConfirmed:!S.matConfirmed)?'请完成必选项以进入对话 · 随时可点上方返回退出':'点击下方任意项可修改已选信息')}</div>
+          </div>
+        </div>
+      </div>
+      <div class="modal-body paper" id="modalBody">
+        <div class="fields">${isField?renderSingleField():renderFullFields()}</div>
+      </div>
+      <div class="modal-foot" id="modalFoot">
+        <div class="lt ${isField?'neutral':'ok'}" id="modalFootLt">
+          ${svg("alert")}
+          <span>${isField?'单字段修改模式':'可随时进入对话，所有选项均为可选'}</span>
+        </div>
+        <button class="btn-confirm" id="modalConfirmBtn" onclick="${isField?'closePreSelect()':'confirmPreSelect()'}">
+          ${svg("check")}
+          <span>${isField?'保存修改':((isCopy?!S.copyConfirmed:!S.matConfirmed)?'开始对话':'保存修改')}</span>
+        </button>
+      </div>
+    </div>
+  `;
+  app.appendChild(modal);
+}
+
+function bindModalEvents(){
+  const body=document.getElementById("modalBody");
+  if(!body)return;
+  
+  body.addEventListener("click",(e)=>{
+    const opt=e.target.closest(".opt");
+    if(opt){
+      e.preventDefault();
+      const field=opt.dataset.field;
+      const value=opt.dataset.value;
+      if(!field)return;
+      handleOptClick(field,value,opt);
+    }
+  });
+  
+  const timeCatBtns=body.querySelectorAll('[data-time-cat]');
+  timeCatBtns.forEach(btn=>{
+    btn.addEventListener("click",(e)=>{
+      e.preventDefault();
+      const cat=btn.dataset.timeCat;
+      handleTimeCategoryClick(cat);
+    });
+  });
+  
+  const overseasTimeBtns=body.querySelectorAll('[data-overseas-time]');
+  overseasTimeBtns.forEach(btn=>{
+    btn.addEventListener("click",(e)=>{
+      e.preventDefault();
+      const n=btn.dataset.overseasTime;
+      handleOverseasTimeClick(n);
+    });
+  });
+  
+  const customInput=body.querySelector('[data-custom-input]');
+  if(customInput){
+    customInput.addEventListener("input",(e)=>{
+      const field=e.target.dataset.customInput;
+      S.customTimeInput=e.target.value;
+      setFieldValue(field,e.target.value);
+    });
+  }
+}
+
+function handleOptClick(field,value,optEl){
+  const sel=S.preMode==="copy"?S.copySel:S.matSel;
+  const isAlreadySelected=sel[field]===value;
+  const newValue=isAlreadySelected?"":value;
+  setFieldValue(field,newValue);
+
+  const fieldOpts=optEl.closest('.field-opts, .sub-panel');
+  if(fieldOpts){
+    fieldOpts.querySelectorAll(`.opt[data-field="${field}"]`).forEach(o=>{
+      o.classList.remove("selected");
+      const check=o.querySelector(".check");
+      if(check)check.remove();
+    });
+  }
+
+  if(!isAlreadySelected){
+    optEl.classList.add("selected");
+    const row=optEl.querySelector(".row");
+    if(row&&!optEl.querySelector(".check")){
+      const check=document.createElement("span");
+      check.className="check";
+      check.innerHTML=svg("check");
+      row.appendChild(check);
+    }
+  }
+
+  updateModalFoot();
+
+  if(field==="timeNode"&&S.preField===null){
+    refreshTimeNodeSection();
+  }
+}
+
+function handleTimeCategoryClick(cat){
+  const isCopy=S.preMode==="copy";
+  const sel=isCopy?S.copySel:S.matSel;
+
+  S.curTimeCat=cat;
+  if(cat==="日常零售"){
+    setFieldValue('timeNode','日常零售');
+  }else if(cat==="其他"){
+    S.customTimeInput="";
+    setFieldValue('timeNode',"");
+  }else{
+    setFieldValue('timeNode',"");
+  }
+
+  refreshTimeNodeSection();
+  updateModalFoot();
+}
+
+function handleOverseasTimeClick(n){
+  if(n==="其他"){
+    S.customTimeInput="";
+    setFieldValue('timeNode',"");
+  }else{
+    setFieldValue('timeNode',n);
+  }
+  refreshTimeNodeSection();
+  updateModalFoot();
+}
+
+function refreshTimeNodeSection(){
+  const field=document.querySelector('.field[data-time-field]');
+  if(!field)return;
+  const isOvs=S.edition==="overseas";
+  const isCopy=S.preMode==="copy";
+  const sel=isCopy?S.copySel:S.matSel;
+  field.outerHTML=renderTimeNodeField(isOvs,sel,true);
+  
+  const newField=document.querySelector('.field[data-time-field]');
+  if(newField){
+    newField.querySelectorAll(".opt").forEach(opt=>{
+      opt.addEventListener("click",(e)=>{
+        e.preventDefault();
+        const f=opt.dataset.field;
+        const v=opt.dataset.value;
+        if(f)handleOptClick(f,v,opt);
+      });
+    });
+    newField.querySelectorAll('[data-time-cat]').forEach(btn=>{
+      btn.addEventListener("click",(e)=>{
+        e.preventDefault();
+        handleTimeCategoryClick(btn.dataset.timeCat);
+      });
+    });
+    newField.querySelectorAll('[data-overseas-time]').forEach(btn=>{
+      btn.addEventListener("click",(e)=>{
+        e.preventDefault();
+        handleOverseasTimeClick(btn.dataset.overseasTime);
+      });
+    });
+    const customInput=newField.querySelector('[data-custom-input]');
+    if(customInput){
+      customInput.addEventListener("input",(e)=>{
+        S.customTimeInput=e.target.value;
+        setFieldValue(e.target.dataset.customInput,e.target.value);
+      });
+    }
+  }
+}
+
+function setFieldValue(field,val){
+  if(S.preMode==="copy"){S.copySel[field]=val;}
+  else{S.matSel[field]=val;}
+}
+
+function updateModalFoot(){
+  const lt=document.getElementById("modalFootLt");
+  const btn=document.getElementById("modalConfirmBtn");
+  const isField=!!S.preField;
+  if(!lt||!btn)return;
+  
+  if(isField){
+    lt.className="lt neutral";
+    btn.disabled=false;
+  }else{
+    lt.className="lt ok";
+    lt.querySelector("span").textContent='可随时进入对话，所有选项均为可选';
+    btn.disabled=false;
+  }
+}
+
+function fieldTitle(f){
+  const map={taskType:"任务类型",teaCategory:"茶叶品类",targetConsumer:"目标消费者",tone:"语气",length:"长度",timeNode:"时间节点",language:"语言",flavorReference:"是否参考咖啡/红酒风味体系",content:"内容",modality:"模态",style:"风格",platform:"平台",giftScene:"送礼场景"};
+  return map[f]||"修改";
+}
+
+function renderSingleField(){
+  const isCopy=S.preMode==="copy";
+  const sel=isCopy?S.copySel:S.matSel;
+  const f=S.preField;
+  const isOvs=S.edition==="overseas";
+  let html="";
+  
+  if(f==="taskType"){
+    const opts=[["component-to-flavor","成分 → 风味","把茶叶成分翻译为消费者听得懂的风味"],["vague-to-vivid","模糊 → 形象描述","将抽象表述转化为具象画面"]];
+    html=`<div class="field"><div class="field-hd"><span class="lb">任务类型</span><span class="req">必选</span></div><div class="field-opts">${opts.map(o=>`<button class="opt ${sel.taskType===o[0]?'selected':''}" data-field="taskType" data-value="${o[0]}"><div class="row"><span class="lb">${o[1]}</span>${sel.taskType===o[0]?'<span class="check">'+svg("check")+'</span>':''}</div><span class="desc">${o[2]}</span></button>`).join("")}</div></div>`;
+  }else if(f==="teaCategory"){
+    html=`<div class="field"><div class="field-hd"><span class="lb">茶叶品类</span><span class="req">必选</span></div><div class="field-opts">${TEA_CATEGORIES.map(c=>`<button class="opt compact ${sel.teaCategory===c?'selected':''}" data-field="teaCategory" data-value="${c}"><div class="row"><span class="lb">${c}</span>${sel.teaCategory===c?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div>`;
+  }else if(f==="targetConsumer"){
+    html=`<div class="field"><div class="field-hd"><span class="lb">目标消费者</span><span class="req">必选</span></div><div class="field-opts">${TARGET_CONSUMERS.map(c=>`<button class="opt ${sel.targetConsumer===c.value?'selected':''}" data-field="targetConsumer" data-value="${c.value}"><div class="row"><span class="lb">${c.label}</span>${sel.targetConsumer===c.value?'<span class="check">'+svg("check")+'</span>':''}</div><span class="desc">${c.desc}</span></button>`).join("")}</div></div>`;
+  }else if(f==="tone"){
+    const tones=isOvs?TONES.filter(t=>t!=="诗意古风"):TONES;
+    html=`<div class="field"><div class="field-hd"><span class="lb">语气</span><span class="hint">可调</span></div><div class="field-opts">${tones.map(t=>`<button class="opt compact ${sel.tone===t?'selected':''}" data-field="tone" data-value="${t}"><div class="row"><span class="lb">${t}</span>${sel.tone===t?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div>`;
+  }else if(f==="length"){
+    html=`<div class="field"><div class="field-hd"><span class="lb">长度</span><span class="hint">可调</span></div><div class="field-opts">${LENGTHS.map(l=>`<button class="opt compact ${sel.length===l?'selected':''}" data-field="length" data-value="${l}"><div class="row"><span class="lb">${l}</span>${sel.length===l?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div>`;
+  }else if(f==="timeNode"){
+    html=renderTimeNodeField(isOvs,sel,false);
+  }else if(f==="language"){
+    html=`<div class="field"><div class="field-hd"><span class="lb">语言</span><span class="req">必选</span></div><div class="field-opts">${OVERSEAS_LANGUAGES.map(l=>`<button class="opt compact ${sel.language===l.value?'selected':''}" data-field="language" data-value="${l.value}"><div class="row"><span class="lb">${l.label}</span>${sel.language===l.value?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div>`;
+  }else if(f==="flavorReference"){
+    html=`<div class="field"><div class="field-hd"><span class="lb">是否参考咖啡/红酒风味体系</span><span class="req">必选</span></div><div class="field-opts">${FLAVOR_REFERENCES.map(fr=>`<button class="opt ${sel.flavorReference===fr.value?'selected':''}" data-field="flavorReference" data-value="${fr.value}"><div class="row"><span class="lb">${fr.label}</span>${sel.flavorReference===fr.value?'<span class="check">'+svg("check")+'</span>':''}</div>${fr.desc?'<span class="desc">'+fr.desc+'</span>':''}</button>`).join("")}</div></div>`;
+  }else if(f==="content"){
+    html=`<div class="field"><div class="field-hd"><span class="lb">内容</span><span class="req">必选</span></div><div class="field-opts">${MATERIAL_CONTENTS.map(c=>`<button class="opt ${sel.content===c.value?'selected':''}" data-field="content" data-value="${c.value}"><div class="row"><span class="lb">${c.label}</span>${sel.content===c.value?'<span class="check">'+svg("check")+'</span>':''}</div><span class="desc">${c.desc}</span></button>`).join("")}</div></div>`;
+  }else if(f==="modality"){
+    html=`<div class="field"><div class="field-hd"><span class="lb">模态</span><span class="req">必选</span></div><div class="field-opts">${MODALITIES.map(m=>`<button class="opt compact ${sel.modality===m.value?'selected':''}" data-field="modality" data-value="${m.value}"><div class="row"><span class="lb">${m.label}</span>${sel.modality===m.value?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div>`;
+  }else if(f==="style"){
+    html=`<div class="field"><div class="field-hd"><span class="lb">风格</span><span class="req">必选</span></div><div class="field-opts">${MATERIAL_STYLES.map(s=>`<button class="opt compact ${sel.style===s?'selected':''}" data-field="style" data-value="${s}"><div class="row"><span class="lb">${s}</span>${sel.style===s?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div>`;
+  }else if(f==="platform"){
+    const ps=isOvs?OVERSEAS_PLATFORMS:DOMESTIC_PLATFORMS;
+    html=`<div class="field"><div class="field-hd"><span class="lb">平台</span><span class="req">必选</span></div><div class="field-opts">${ps.map(p=>`<button class="opt compact ${sel.platform===p?'selected':''}" data-field="platform" data-value="${p}"><div class="row"><span class="lb">${p}</span>${sel.platform===p?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div>`;
+  }else if(f==="giftScene"){
+    html=`<div class="field"><div class="field-hd"><span class="lb">送礼场景</span><span class="hint">可选</span></div><div class="field-opts">${GIFT_SCENES.map(g=>`<button class="opt ${sel.giftScene===g.value?'selected':''}" data-field="giftScene" data-value="${g.value}"><div class="row"><span class="lb">${g.label}</span>${sel.giftScene===g.value?'<span class="check">'+svg("check")+'</span>':''}</div><span class="desc">${g.desc}</span></button>`).join("")}</div></div>`;
+  }
+  return html;
+}
+
+function renderTimeNodeField(isOvs,sel,dataAttr){
+  if(isOvs){
+    const isOther=sel.timeNode&&!OVERSEAS_TIME_NODES.includes(sel.timeNode);
+    if(isOther&&!S.customTimeInput)S.customTimeInput=sel.timeNode;
+    let html=`<div class="field" ${dataAttr?'data-time-field':''}><div class="field-hd"><span class="lb">时间节点</span><span class="hint">可调</span></div><div class="field-opts">`;
+    html+=OVERSEAS_TIME_NODES.map(n=>{
+      const sel2=n==="其他"?isOther:sel.timeNode===n;
+      return `<button class="opt compact ${sel2?'selected':''}" data-overseas-time="${n}"><div class="row"><span class="lb">${n}</span>${sel2?'<span class="check">'+svg("check")+'</span>':''}</div></button>`;
+    }).join("");
+    html+=`</div>`;
+    if(isOther){
+      html+=`<div class="input-row"><input type="text" value="${S.customTimeInput}" placeholder="Please enter specific occasion" data-custom-input="timeNode"/><span class="tag">手动输入</span></div>`;
+    }
+    html+=`</div>`;
+    return html;
+  }
+  let cat=S.curTimeCat||"";
+  if(!cat&&sel.timeNode){
+    if(TIME_NODE_CATEGORIES.includes(sel.timeNode))cat=sel.timeNode;
+    else if(LEGAL_HOLIDAYS.includes(sel.timeNode))cat="法定节日";
+    else if(TRADITIONAL_SOLAR_TERMS.includes(sel.timeNode))cat="传统节气";
+    else if(SHOPPING_FESTIVALS.includes(sel.timeNode))cat="购物节";
+    else cat="其他";
+  }
+  if(cat==="其他"&&!S.customTimeInput)S.customTimeInput=sel.timeNode;
+  let html=`<div class="field" ${dataAttr?'data-time-field':''}><div class="field-hd"><span class="lb">时间节点</span><span class="hint">可调</span></div><div class="field-opts">`;
+  html+=TIME_NODE_CATEGORIES.map(c=>`<button class="opt compact ${cat===c?'selected':''}" data-time-cat="${c}"><div class="row"><span class="lb">${c}</span>${cat===c?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("");
+  html+=`</div>`;
+  if(cat==="法定节日"){
+    html+=`<div class="sub-panel">${LEGAL_HOLIDAYS.map(h=>`<button class="opt compact ${sel.timeNode===h?'selected':''}" data-field="timeNode" data-value="${h}"><div class="row"><span class="lb">${h}</span>${sel.timeNode===h?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div>`;
+  }else if(cat==="传统节气"){
+    html+=`<div class="sub-panel">${TRADITIONAL_SOLAR_TERMS.map(t=>`<button class="opt compact ${sel.timeNode===t?'selected':''}" data-field="timeNode" data-value="${t}"><div class="row"><span class="lb">${t}</span>${sel.timeNode===t?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div>`;
+  }else if(cat==="购物节"){
+    html+=`<div class="sub-panel">${SHOPPING_FESTIVALS.map(s=>`<button class="opt compact ${sel.timeNode===s?'selected':''}" data-field="timeNode" data-value="${s}"><div class="row"><span class="lb">${s}</span>${sel.timeNode===s?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div>`;
+  }else if(cat==="其他"){
+    html+=`<div class="input-row"><input type="text" value="${S.customTimeInput}" placeholder="请输入具体节日或时间，如「腊八节」" data-custom-input="timeNode"/><span class="tag">手动输入</span></div>`;
+  }
+  html+=`</div>`;
+  return html;
+}
+
+function renderFullFields(){
+  const isOvs=S.edition==="overseas";
+  const isCopy=S.preMode==="copy";
+  let html="";
+  if(isCopy){
+    const taskOpts=[["component-to-flavor","成分 → 风味","把茶叶成分翻译为消费者听得懂的风味"],["vague-to-vivid","模糊 → 形象描述","将抽象表述转化为具象画面"]];
+    html+=`<div class="field"><div class="field-hd"><span class="lb">任务类型</span><span class="req">必选</span></div><div class="field-opts">${taskOpts.map(o=>`<button class="opt ${S.copySel.taskType===o[0]?'selected':''}" data-field="taskType" data-value="${o[0]}"><div class="row"><span class="lb">${o[1]}</span>${S.copySel.taskType===o[0]?'<span class="check">'+svg("check")+'</span>':''}</div><span class="desc">${o[2]}</span></button>`).join("")}</div></div>`;
+    html+=`<div class="field"><div class="field-hd"><span class="lb">茶叶品类</span><span class="req">必选</span></div><div class="field-opts">${TEA_CATEGORIES.map(c=>`<button class="opt compact ${S.copySel.teaCategory===c?'selected':''}" data-field="teaCategory" data-value="${c}"><div class="row"><span class="lb">${c}</span>${S.copySel.teaCategory===c?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div>`;
+    html+=`<div class="field"><div class="field-hd"><span class="lb">目标消费者</span><span class="req">必选</span></div><div class="field-opts">${TARGET_CONSUMERS.map(c=>`<button class="opt ${S.copySel.targetConsumer===c.value?'selected':''}" data-field="targetConsumer" data-value="${c.value}"><div class="row"><span class="lb">${c.label}</span>${S.copySel.targetConsumer===c.value?'<span class="check">'+svg("check")+'</span>':''}</div><span class="desc">${c.desc}</span></button>`).join("")}</div></div>`;
+    html+=`<div class="field-2col"><div class="field"><div class="field-hd"><span class="lb">语气</span><span class="hint">可调</span></div><div class="field-opts">${(isOvs?TONES.filter(t=>t!=="诗意古风"):TONES).map(t=>`<button class="opt compact ${S.copySel.tone===t?'selected':''}" data-field="tone" data-value="${t}"><div class="row"><span class="lb">${t}</span>${S.copySel.tone===t?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div><div class="field"><div class="field-hd"><span class="lb">长度</span><span class="hint">可调</span></div><div class="field-opts">${LENGTHS.map(l=>`<button class="opt compact ${S.copySel.length===l?'selected':''}" data-field="length" data-value="${l}"><div class="row"><span class="lb">${l}</span>${S.copySel.length===l?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div></div>`;
+    html+=renderTimeNodeField(isOvs,S.copySel,true);
+    html+=`<div class="field"><div class="field-hd"><span class="lb">送礼场景</span><span class="hint">可选</span></div><div class="field-opts">${GIFT_SCENES.map(g=>`<button class="opt ${S.copySel.giftScene===g.value?'selected':''}" data-field="giftScene" data-value="${g.value}"><div class="row"><span class="lb">${g.label}</span>${S.copySel.giftScene===g.value?'<span class="check">'+svg("check")+'</span>':''}</div><span class="desc">${g.desc}</span></button>`).join("")}</div></div>`;
+    if(isOvs){
+      html+=`<div class="field"><div class="field-hd"><span class="lb">语言</span><span class="req">必选</span></div><div class="field-opts">${OVERSEAS_LANGUAGES.map(l=>`<button class="opt compact ${S.copySel.language===l.value?'selected':''}" data-field="language" data-value="${l.value}"><div class="row"><span class="lb">${l.label}</span>${S.copySel.language===l.value?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div>`;
+      html+=`<div class="field"><div class="field-hd"><span class="lb">是否参考咖啡/红酒风味体系</span><span class="req">必选</span></div><div class="field-opts">${FLAVOR_REFERENCES.map(f=>`<button class="opt ${S.copySel.flavorReference===f.value?'selected':''}" data-field="flavorReference" data-value="${f.value}"><div class="row"><span class="lb">${f.label}</span>${S.copySel.flavorReference===f.value?'<span class="check">'+svg("check")+'</span>':''}</div>${f.desc?'<span class="desc">'+f.desc+'</span>':''}</button>`).join("")}</div></div>`;
+    }
+  }else{
+    html+=`<div class="field"><div class="field-hd"><span class="lb">内容</span><span class="req">必选</span></div><div class="field-opts">${MATERIAL_CONTENTS.map(c=>`<button class="opt ${S.matSel.content===c.value?'selected':''}" data-field="content" data-value="${c.value}"><div class="row"><span class="lb">${c.label}</span>${S.matSel.content===c.value?'<span class="check">'+svg("check")+'</span>':''}</div><span class="desc">${c.desc}</span></button>`).join("")}</div></div>`;
+    html+=`<div class="field-2col"><div class="field"><div class="field-hd"><span class="lb">模态</span><span class="req">必选</span></div><div class="field-opts">${MODALITIES.map(m=>`<button class="opt compact ${S.matSel.modality===m.value?'selected':''}" data-field="modality" data-value="${m.value}"><div class="row"><span class="lb">${m.label}</span>${S.matSel.modality===m.value?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div><div class="field"><div class="field-hd"><span class="lb">风格</span><span class="req">必选</span></div><div class="field-opts">${MATERIAL_STYLES.map(s=>`<button class="opt compact ${S.matSel.style===s?'selected':''}" data-field="style" data-value="${s}"><div class="row"><span class="lb">${s}</span>${S.matSel.style===s?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div></div>`;
+    const ps=isOvs?OVERSEAS_PLATFORMS:DOMESTIC_PLATFORMS;
+    html+=`<div class="field"><div class="field-hd"><span class="lb">平台</span><span class="req">必选</span></div><div class="field-opts">${ps.map(p=>`<button class="opt compact ${S.matSel.platform===p?'selected':''}" data-field="platform" data-value="${p}"><div class="row"><span class="lb">${p}</span>${S.matSel.platform===p?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div>`;
+    html+=`<div class="field"><div class="field-hd"><span class="lb">送礼场景</span><span class="hint">可选</span></div><div class="field-opts">${GIFT_SCENES.map(g=>`<button class="opt ${S.matSel.giftScene===g.value?'selected':''}" data-field="giftScene" data-value="${g.value}"><div class="row"><span class="lb">${g.label}</span>${S.matSel.giftScene===g.value?'<span class="check">'+svg("check")+'</span>':''}</div><span class="desc">${g.desc}</span></button>`).join("")}</div></div>`;
+    if(isOvs){
+      html+=`<div class="field"><div class="field-hd"><span class="lb">茶叶品类</span><span class="req">必选</span></div><div class="field-opts">${TEA_CATEGORIES.map(c=>`<button class="opt compact ${S.matSel.teaCategory===c?'selected':''}" data-field="teaCategory" data-value="${c}"><div class="row"><span class="lb">${c}</span>${S.matSel.teaCategory===c?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div>`;
+      html+=`<div class="field-2col"><div class="field"><div class="field-hd"><span class="lb">语言</span><span class="req">必选</span></div><div class="field-opts">${OVERSEAS_LANGUAGES.map(l=>`<button class="opt compact ${S.matSel.language===l.value?'selected':''}" data-field="language" data-value="${l.value}"><div class="row"><span class="lb">${l.label}</span>${S.matSel.language===l.value?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div><div class="field"><div class="field-hd"><span class="lb">目标消费者</span><span class="req">必选</span></div><div class="field-opts">${TARGET_CONSUMERS.map(c=>`<button class="opt ${S.matSel.targetConsumer===c.value?'selected':''}" data-field="targetConsumer" data-value="${c.value}"><div class="row"><span class="lb">${c.label}</span>${S.matSel.targetConsumer===c.value?'<span class="check">'+svg("check")+'</span>':''}</div><span class="desc">${c.desc}</span></button>`).join("")}</div></div></div>`;
+      html+=`<div class="field"><div class="field-hd"><span class="lb">是否参考咖啡/红酒风味体系</span><span class="req">必选</span></div><div class="field-opts">${FLAVOR_REFERENCES.map(f=>`<button class="opt ${S.matSel.flavorReference===f.value?'selected':''}" data-field="flavorReference" data-value="${f.value}"><div class="row"><span class="lb">${f.label}</span>${S.matSel.flavorReference===f.value?'<span class="check">'+svg("check")+'</span>':''}</div>${f.desc?'<span class="desc">'+f.desc+'</span>':''}</button>`).join("")}</div></div>`;
+      html+=`<div class="field-2col"><div class="field"><div class="field-hd"><span class="lb">语气</span><span class="hint">可调</span></div><div class="field-opts">${(isOvs?TONES.filter(t=>t!=="诗意古风"):TONES).map(t=>`<button class="opt compact ${S.matSel.tone===t?'selected':''}" data-field="tone" data-value="${t}"><div class="row"><span class="lb">${t}</span>${S.matSel.tone===t?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div><div class="field"><div class="field-hd"><span class="lb">长度</span><span class="hint">可调</span></div><div class="field-opts">${LENGTHS.map(l=>`<button class="opt compact ${S.matSel.length===l?'selected':''}" data-field="length" data-value="${l}"><div class="row"><span class="lb">${l}</span>${S.matSel.length===l?'<span class="check">'+svg("check")+'</span>':''}</div></button>`).join("")}</div></div></div>`;
+    }
+  }
+  return html;
+}
+
+function canConfirm(){
+  return true;
+}
+
+function confirmPreSelect(){
+  if(!canConfirm())return;
+  if(S.preMode==="copy"){S.copyConfirmed=true;}
+  else{S.matConfirmed=true;}
+  S.preOpen=false;S.preField=null;S.customTimeInput="";S.curTimeCat="";
+  const modal=document.querySelector(".modal");
+  if(modal)modal.remove();
+  updateSelBar();
+  if(S.preMode==="copy")startCopyChat();
+  else startMaterialChat();
+  saveStateToStorage();
+}
+
+function closePreSelect(){
+  S.preOpen=false;S.preField=null;S.customTimeInput="";S.curTimeCat="";
+  const modal=document.querySelector(".modal");
+  if(modal)modal.remove();
+  updateSelBar();
+}
+
+function renderShortcutHint(){
+  return ``;
+}
+
+document.addEventListener("keydown",e=>{
+  if(e.key==="Escape"&&S.preOpen){e.preventDefault();closePreSelect();return;}
+  if(e.altKey&&e.shiftKey){
+    const k=e.key.toLowerCase();
+    if(k==="d"){e.preventDefault();goWorkbench("domestic");}
+    else if(k==="o"){e.preventDefault();goWorkbench("overseas");}
+  }
+});
+
+render();
+</script>
+</body>
+</html>
