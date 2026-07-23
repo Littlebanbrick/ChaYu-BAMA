@@ -1234,7 +1234,10 @@ function handleOption(action,label){
     S.typingText="正在准备物料文案…";S.typing=true;updateChatArea();
     const tea=S.matSel.teaCategory||"茶叶";
     const routeId="demo_"+(S.matSel.teaCategory||"tea");
-    BAMA_API.marketingAsset(S.matSel.teaCategory||"赛珍珠浓香型安溪铁观音", S.matSel, routeId).then(assetRes=>{
+    // 物料语言由 edition 决定：国内版 zh / 海外版 sel.language。修 P0——
+    // 之前透传 sel.language（默认 en），国内版误取英文物料 + 英文 copy 印进海报图。
+    const assetEdition=S.edition;
+    BAMA_API.marketingAsset(S.matSel.teaCategory||"赛珍珠浓香型安溪铁观音", S.matSel, routeId, assetEdition).then(assetRes=>{
       const ad=(assetRes.data)||{};
       const copy=ad.copy||{};
       const imagePrompt=ad.image_prompt;
@@ -1243,7 +1246,7 @@ function handleOption(action,label){
         throw new Error("后端未返回 image_prompt");
       }
       S.typingText=S.matSel.modality==="video"?"正在生成视频物料，预计需要几分钟…":"正在生成图片，通常需要 1-2 分钟，请稍候…";updateChatArea();
-      return BAMA_API.imageGenerate(imagePrompt, S.matSel.teaCategory||"赛珍珠浓香型安溪铁观音", S.matSel, routeId).then(imgRes=>{
+      return BAMA_API.imageGenerate(imagePrompt, S.matSel.teaCategory||"赛珍珠浓香型安溪铁观音", S.matSel, routeId, assetEdition).then(imgRes=>{
         const imgData=imgRes.data||{};
         const imageUrl=imgData.image_url;
         const contentLabel=S.matSel.content==="tea-marketing"?"茶叶营销":"茶文化";
@@ -1336,7 +1339,7 @@ function handleUserInput(text){
   const isOvs=S.edition==="overseas";
   // 自由提问走 /api/chat：先经意义评判 LLM，无意义输入被拒（fallback）；
   // 有意义把 text 作为 directive 透传，真正影响生成（不再输什么都给一大段）。
-  const apiCall=BAMA_API.chat(S.copySel.teaCategory, S.copySel, {mode:isOvs?"overseas":"domestic", text});
+  const apiCall=BAMA_API.chat(S.copySel.teaCategory, S.copySel, {mode:isOvs?"overseas":"domestic", text, edition:S.edition});
   apiCall.then(r=>{
     S.typing=false;
     S.typingText="茶语正在努力输入中";

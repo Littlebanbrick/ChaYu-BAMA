@@ -130,13 +130,19 @@ const BAMA_API=(function(){
   }
 
   // 4. 物料数据生成（第一步）
-  async function marketingAsset(teaName, sel, routeId){
+  // 物料语言由 edition 决定，不透传 sel.language：
+  //   国内版 → zh（中文物料 + 中文 copy 印进图）
+  //   海外版 → sel.language（用户选的目标语言，默认 en）
+  // 修 P0：此前透传 sel.language，而 sel.language 默认 "en"，国内版误发 en →
+  //   后端取跨文化英文物料 asset_*_en + 把英文 copy 印进海报图。
+  async function marketingAsset(teaName, sel, routeId, edition){
     const teaId=getTeaId(teaName);
+    const language=edition==="overseas"?(sel.language||"en"):"zh";
     const body={
       route_id: routeId||("demo_"+teaId),
       asset_type: "poster",
       platform: sel.platform||undefined,
-      language: sel.language||"zh",
+      language,
       style: sel.style||undefined,
       content_theme: sel.content?(sel.content.replace(/-/g,"_")):undefined
     };
@@ -145,15 +151,19 @@ const BAMA_API=(function(){
   }
 
   // 5. 真实生图（第二步）
-  async function imageGenerate(prompt, teaName, sel, routeId){
+  // 物料语言由 edition 决定（同 marketingAsset）：国内版 zh / 海外版 sel.language。
+  // 后端按 tea_id + language 从 seed asset 取 copy（headline/subheadline/body）印进图——
+  // 国内版必须传 zh，否则会取英文 copy 印进中文海报图（P0 修复点）。
+  async function imageGenerate(prompt, teaName, sel, routeId, edition){
     const teaId=getTeaId(teaName);
+    const language=edition==="overseas"?(sel.language||"en"):"zh";
     const body={
       prompt: prompt,
       size: "1K",
       style: sel.style==="商务"?"business":"fresh",
       scene: "closeup",
       tea_id: teaId,
-      language: sel.language||"zh",
+      language,
       route_id: routeId||("demo_"+teaId)
     };
     return request("POST", "/api/image/generate", body);
@@ -173,7 +183,8 @@ const BAMA_API=(function(){
   // directive 透传到 mode 对应生成链路，真正影响生成。
   //   mode="domestic"|"overseas" → 复用文案 hint，响应 shape 同 domestic/cross-cultural。
   //   mode="material" → 复用物料字段，响应 shape 同 marketing-asset（含 image_prompt）。
-  // opts={mode, text, routeId?}。fallback 由 request 层统一拦截抛 Error。
+  // opts={mode, text, routeId?, edition?}。fallback 由 request 层统一拦截抛 Error。
+  // edition 用于物料语言判定：国内版 zh / 海外版 sel.language（避免 sel.language 默认 en 串进国内链）。
   async function chat(teaName, sel, opts){
     const teaId=getTeaId(teaName);
     const mode=opts&&opts.mode;
@@ -183,7 +194,8 @@ const BAMA_API=(function(){
       body.route_id=opts.routeId||("demo_"+teaId);
       body.asset_type="poster";
       if(sel.platform)body.platform=sel.platform;
-      body.language=sel.language||"zh";
+      // 物料语言由 edition 决定（国内 zh / 海外 sel.language），与 marketingAsset / imageGenerate 一致
+      body.language=(opts.edition==="overseas")?(sel.language||"en"):"zh";
       if(sel.style)body.style=sel.style;
       if(sel.content)body.content_theme=sel.content.replace(/-/g,"_");
     }else{
