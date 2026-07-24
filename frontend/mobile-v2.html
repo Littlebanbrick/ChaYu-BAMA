@@ -987,7 +987,7 @@ function bindChat(){
     list.addEventListener("click",e=>{
       const node=e.target.closest(".pc-node");
       if(!node||!node.dataset.key)return;
-      openTraceDetail(node.dataset.key, node.dataset.label||node.title||"");
+      openTraceDetail(node.dataset.key, node.dataset.label||node.title||"", node.title||"");
     });
   }
 }
@@ -1774,7 +1774,7 @@ function closeTraceDetail(){
   const m=document.querySelector(".trace-detail-mask");
   if(m)m.remove();
 }
-function openTraceDetail(nodeKey,label){
+function openTraceDetail(nodeKey,label,summary){
   closeTraceDetail();
   const sh=h("div","sheet-mask trace-detail-mask");
   sh.innerHTML=`<div class="sheet-overlay" onclick="closeTraceDetail()"></div>
@@ -1784,9 +1784,9 @@ function openTraceDetail(nodeKey,label){
       <div class="sheet-body"><div class="form" id="tdBody"><div class="td-loading"><span>正在加载依据…</span></div></div></div>
     </div>`;
   app.appendChild(sh);
-  renderTraceDetailContent(nodeKey);
+  renderTraceDetailContent(nodeKey, summary);
 }
-function renderTraceDetailContent(nodeKey){
+function renderTraceDetailContent(nodeKey, summary){
   const body=document.querySelector("#tdBody");
   if(!body)return;
   const k=String(nodeKey||"");
@@ -1814,7 +1814,16 @@ function renderTraceDetailContent(nodeKey){
       body.innerHTML=`<div class="td-sec"><div class="td-sec-h">风味坐标</div><div class="td-list">${items||'<div class="td-p">暂无维度数据。</div>'}</div></div>`;
     }).catch(e=>renderFallback(e.fallback?e.message:("加载失败："+e.message)));
   }else{
-    renderFallback("该层（"+k+"）的完整内容见上方对话或物料卡，本层暂不支持展开。\n\nDemo 阶段仅知识依据、风味坐标两层提供详情展开（复用已有 GET 接口）。");
+    // 表达层 / 物料层无独立 GET 路由 → 不再弹"暂不支持展开"的报错，
+    // 改为友好展示该层摘要（trace 链节点自带的 summary），
+    // 并引导用户向上回看对话内容，避免裂图式空窗。
+    const sumText=summary?String(summary):"";
+    const parts=[];
+    if(sumText){
+      parts.push(`<div class="td-sec"><div class="td-sec-h">本层摘要</div><div class="td-p">${escapeHtml(sumText)}</div></div>`);
+    }
+    parts.push(`<div class="td-sec"><div class="td-sec-h">查看完整内容</div><div class="td-p">这一层的完整表达 / 物料已在上方对话气泡中呈现，可向上滚动回看。底层依据（知识、风味坐标）仍可点击对应节点展开。</div></div>`);
+    body.innerHTML=parts.join("");
   }
 }
 
